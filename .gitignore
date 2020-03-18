@@ -1,1 +1,4 @@
 /node_modules
+/db
+/config
+npm-debug.log
