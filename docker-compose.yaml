@@ -12,17 +12,14 @@ services:
 
   node:
     image: "node:8"
-    user: "node"
     working_dir: /home/node/app
-    environment:
-      - NODE_ENV=production
     volumes:
       - ./:/home/node/app
     expose:
       - "8081"
     links:
       - mongo
-    command: "node server.js"
+    command: npm run dev
     ports:
       - 8081:4000
 

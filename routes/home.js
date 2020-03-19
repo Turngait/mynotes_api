@@ -1,26 +1,11 @@
 const { Router } = require('express')
-var mongoose = require('mongoose')
-const { urlLocal, urlAtlas } = require('../config/mongo')
-
-
+const User = require('../models/user')
 const router = Router()
 
 router.get('/', async (req, res) => {
-
-  await mongoose.connect(urlAtlas, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }).then(() => {
-    console.log('successfully connected to the database');
-    res.status(200)
-    res.send('MyNotes API1')
-  }).catch(err => {
-    console.log(err)
-    console.log('error connecting to the database');
-  })
-
-
+  const user = new User('email@email.ru')
+  user.connectToMongo()
+  res.send('MyNotes API')
 })
-
 
 module.exports = router
