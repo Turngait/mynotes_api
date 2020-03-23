@@ -3,6 +3,8 @@ const cors = require('cors')
 const { PORT } = require('./config/api')
 const homeRouter = require('./routes/home')
 const authRouter = require('./routes/authorization')
+const mongoose = require('mongoose')
+const {urlLocal} = require('./config/mongo')
 const app = express()
 
 app.use(cors())
@@ -17,7 +19,14 @@ app.use(express.json({
 app.use('/', homeRouter)
 app.use('/auth', authRouter)
 
-const start = (app) => {
+const start = async (app) => {
+  await mongoose.connect(urlLocal, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }).then(() => {
+    console.log('successfully connected to the database');
+  })
+
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
   })

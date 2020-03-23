@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const {urlLocal} = require('../config/mongo')
 
+
 class DAO {
   constructor(collection) {
     this.collection = collection
