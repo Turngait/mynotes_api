@@ -20,13 +20,12 @@ class User extends DAO {
         const token = crypto.createHash('md5').update(String(Date.now())).digest('hex')
         try {
           await user.updateOne({token})
-          const answer = {
+
+          return {
             name: user.name, 
             email: user.email,
             token
           }
-
-          return answer
         } catch (e) {
           console.log(e)
           return false
@@ -35,6 +34,30 @@ class User extends DAO {
         return false
       }
     } else {
+      return false
+    }
+  }
+
+  async signUp(data) {
+    const paper = crypto.createHash('md5').update(String(Date.now())).digest('hex')
+    const pass = createPassword(data.pass, paper)
+    const date = new Date().toISOString().slice(0,10)
+    const user = new user_model({
+      name: data.name,
+      email: data.email,
+      pass,
+      paper,
+      wishlist: [],
+      createdAt: date
+    })
+
+    try {
+      await user.save()
+
+      return true
+    } catch (e) {
+      console.log(e)
+      
       return false
     }
   }

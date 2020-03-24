@@ -1,8 +1,6 @@
-const crypto = require('crypto')
 const user_model = require('../models/user_model')
 const User = require('../models/User')
 const DTO = require('../models/dto')
-const {createPassword} = require('../config/security')
 
 class AuthController {
   constructor() {
@@ -26,8 +24,29 @@ class AuthController {
     }
   }
 
-  signUp(req, res) {
-
+  static async signUp(req, res) {
+    const response = new DTO()
+    const user = new User(user_model)
+    try {
+      const answer = await user.signUp(req.body)
+      if (answer) {
+        res.status(202)
+        response.setStatus(202)
+        response.setStatusText('User created')
+        response.setData({})
+      } else {
+        res.status(500)
+        response.setStatus(500)
+        response.setStatusText('Server error')
+        response.setData({})
+      }
+      res.json(response.getResponse())
+    } catch(e) {
+      res.status(503)
+      response.setStatus(503)
+      response.setStatusText('Server error')
+      res.json(response.getResponse())
+    }
   }
 }
 
