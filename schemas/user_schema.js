@@ -1,9 +1,21 @@
+const {Types} = require('mongoose')
+
 module.exports = {
     name: String,
     email: String,
     pass: String,
     paper: String,
-    wishlist: Array,
+    wlist: [
+        {
+            id: Types.ObjectId,
+            name: String,
+            text: String,
+            price: Number,
+            link: String,
+            priority: Number,
+            group: String
+        }
+    ],
     token: String,
     createdAt: String
 }

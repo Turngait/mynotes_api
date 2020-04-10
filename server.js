@@ -11,10 +11,8 @@ const app = express()
 app.use(cors())
 app.use(express.json({
   inflate: true,
-  reviver: null,
   strict: true,
-  type: 'application/json',
-  verify: undefined
+  type: 'application/json'
 }))
 
 app.use('/', homeRouter)

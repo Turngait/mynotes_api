@@ -47,7 +47,7 @@ class User extends DAO {
       email: data.email,
       pass,
       paper,
-      wishlist: [],
+      wlist: [],
       createdAt: date
     })
 
@@ -60,6 +60,10 @@ class User extends DAO {
       
       return false
     }
+  }
+
+  async getUser (token) {
+    return await this.model.findOne({token})
   }
 }
 
