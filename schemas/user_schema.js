@@ -13,7 +13,8 @@ module.exports = {
             price: Number,
             link: String,
             priority: Number,
-            group: String
+            group: String,
+            date: String
         }
     ],
     token: String,

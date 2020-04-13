@@ -29,7 +29,11 @@ class AuthController {
     const user = new User(user_model)
     try {
       const answer = await user.signUp(req.body)
-      if (answer) {
+      if (answer === 'User exist') {
+        response.setStatus(208)
+        response.setStatusText('User exist')
+        response.setData({})
+      } else if (answer) {
         res.status(202)
         response.setStatus(202)
         response.setStatusText('User created')

@@ -39,6 +39,10 @@ class User extends DAO {
   }
 
   async signUp(data) {
+    if (this.checkUserByEmail(data.email)) {
+      return 'User exist'
+    }
+
     const paper = crypto.createHash('md5').update(String(Date.now())).digest('hex')
     const pass = createPassword(data.pass, paper)
     const date = new Date().toISOString().slice(0,10)
@@ -58,6 +62,15 @@ class User extends DAO {
     } catch (e) {
       console.log(e)
       
+      return false
+    }
+  }
+
+  async checkUserByEmail(email) {
+    const user = await this.model.findOne({'email': data.email})
+    if (user) {
+      return true
+    } else {
       return false
     }
   }

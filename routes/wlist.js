@@ -1,11 +1,20 @@
 const {Router} = require('express')
 const User = require('../models/User')
+const {validationResult} = require('express-validator/check')
+const {addWlistValidators} = require('../validators')
 const user_model = require('../models/user_model')
 const DTO = require('../models/dto')
 
 const router = Router()
 
-router.post('/add', async (req, res)=>{
+router.post('/add', addWlistValidators, async (req, res) => {
+  const errors = validationResult(req)
+
+  if(!errors.isEmpty()) {
+    res.status(422)
+    return res.json({errors})
+  }
+
   const response = new DTO()
   const {name, link, price, text, priority, group} = req.body
   const wlistItem = {
@@ -14,7 +23,8 @@ router.post('/add', async (req, res)=>{
     price,
     priority,
     group,
-    link
+    link,
+    date: new Date().toISOString().slice(0,10)
   }
 
   const {token} = req.body
