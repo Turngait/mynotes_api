@@ -64,4 +64,39 @@ router.get('/:token', async (req, res) => {
   }
 })
 
+router.delete('/:id/:token', async (req, res) => {
+  const itemId = req.params.id
+  const token = req.params.token
+  const response = new DTO()
+  const user = new User(user_model)
+  const iUser = await user.getUser(token)
+  if (iUser) {
+    let items = iUser.wlist
+    items = items.filter(i => i._id.toString() !== itemId)
+    iUser.wlist = items
+
+    if(iUser.save()) {
+      res.status(204)
+      response.setStatus(204)
+      res.json(response.getResponse())
+    } else {
+      res.status(503)
+      response.setStatus(503)
+      response.setStatusText('Server error')
+      res.json(response.getResponse())
+    }
+  } else {
+    res.status(403)
+    response.setStatus(403)
+    response.setStatusText('Access denied')
+    res.json(response.getResponse())
+  }
+})
+
+router.post('/addGroup', async (req, res) => {
+  console.log(req.body)
+
+  res.json({test: true})
+})
+
 module.exports = router
