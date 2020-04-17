@@ -4,6 +4,7 @@ const { PORT } = require('./config/api')
 const homeRouter = require('./routes/home')
 const authRouter = require('./routes/authorization')
 const wlistRouter = require('./routes/wlist')
+const finRouter = require('./routes/finance')
 const mongoose = require('mongoose')
 const {urlLocal} = require('./config/mongo')
 const app = express()
@@ -18,6 +19,7 @@ app.use(express.json({
 app.use('/', homeRouter)
 app.use('/auth', authRouter)
 app.use('/wlist', wlistRouter)
+app.use('/fin/', finRouter)
 
 const start = async (app) => {
   await mongoose.connect(urlLocal, {
