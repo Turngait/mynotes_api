@@ -23,11 +23,11 @@ Routes:
   Finance:
 
   ```
-  /fin/cost/:token/:period - Get all cost by period for user
-  /fin/cost/:token - Get all costs for user
+  /fin/cost/get/:token/:period - Get all cost by period for user
+  /fin/cost/get/:token - Get all costs for user
   /fin/cost/add - Add cost 
   /fin/cost/edit/:id - Edit cost by ID
   /fin/cost/delete/:id/:token - Delete cost by ID
 
-  /fin/group/
+  /fin/group/add
   ```

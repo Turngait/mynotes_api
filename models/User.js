@@ -78,6 +78,10 @@ class User extends DAO {
   async getUser (token) {
     return await this.model.findOne({token})
   }
+  async getUserId (token) {
+    const candidate = await this.model.findOne({token})
+    return candidate._id
+  }
 }
 
 module.exports = User
