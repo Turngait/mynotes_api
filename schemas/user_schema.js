@@ -11,6 +11,7 @@ module.exports = {
             name: String,
             text: String,
             price: Number,
+            spent: Number,
             link: String,
             priority: Number,
             group: String,

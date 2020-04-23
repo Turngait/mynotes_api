@@ -23,6 +23,7 @@ class WlistController {
       priority,
       group,
       link,
+      spent: 0,
       date: new Date().toISOString().slice(0,10)
     }
 
