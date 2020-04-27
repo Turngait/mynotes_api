@@ -59,6 +59,22 @@ class FinController {
       }
 
       if (result) {
+        if (cost.wlistItem.toString() !== '0') {
+          const id_wlist = cost.wlistItem;
+          const IUser = await user.getUser(token);
+          const wlistItems = IUser.wlist;
+
+          if(wlistItems) {
+            for(let item of wlistItems) {
+              if (item._id.toString() === id_wlist.toString()) {
+                item.spent = Number(item.spent) + Number(cost.amount);
+              }
+            }
+          }
+
+          IUser.wlist = wlistItems;
+          IUser.save();
+        }
         res.status(204);
         response.setStatus(204);
       } else {
@@ -79,7 +95,48 @@ class FinController {
   }
 
   static async deletCost(req, res) {
-    
+    const response = new DTO()
+    const user = new User(user_model)
+    const {id, token} =req.params;
+    const id_user = await user.getUserId(token);
+
+    if (id_user) {
+      const CostItems = await cost_model.findOne({id_user});
+      if (CostItems) {
+        for (let item of CostItems.items) {
+          if (item._id.toString() === id) {
+            if (item.id_wlist_item.toString() !== '0') {
+              const IUser = await user.getUser(token);
+              const id_wlist = item.id_wlist_item.toString();
+              const wlists = IUser.wlist
+
+              for (let wlist of wlists) {
+                if(wlist._id.toString() === id_wlist) {
+                  wlist.spent = Number(wlist.spent) - Number(item.amount)
+                }
+              }
+              IUser.wlist = wlists;
+              IUser.save()
+            }
+          }
+        }
+
+        let items = CostItems.items.filter(i => i._id.toString() !== id);
+        CostItems.items = items;
+
+        if(CostItems.save()) {
+          res.status(204)
+          response.setStatus(204)
+        } else {
+          res.status(503)
+          response.setStatus(503)
+          response.setStatusText('Server error')
+        }
+      }
+    } else {
+      response.setStatus(403)
+    }
+    res.json(response.getResponse())
   }
 
   static async addCostGroup(req, res) {

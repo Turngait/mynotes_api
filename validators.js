@@ -18,3 +18,13 @@ exports.addWlistValidators = [
 exports.addWlistGroupValidators = [
   body('name').isLength({min: 3}).withMessage('Length of title must be more then 3 letters')
 ]
+
+exports.addCostGroupValidators = [
+  body('groupTitle').isLength({min: 3}).withMessage('Length of title must be more then 3 letters')
+]
+
+exports.addCostItemValidators = [
+  body('cost.title').isLength({min: 3}).withMessage('Length of title must be more then 3 letters'),
+  body('cost.amount').isNumeric().withMessage('Ammount of cost must be a numeric'),
+  body('cost.amount').isLength({min: 1}).withMessage('Ammount of cost must be a numeric')
+]
