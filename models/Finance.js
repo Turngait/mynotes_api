@@ -15,6 +15,9 @@ class Finance extends DAO {
     if (id_user) {
       const groups = await this.costGroupModel.findOne({id_user});
       const costs = await this.costModel.findOne({id_user});
+      costs.items.sort(function(a,b){
+        return new Date(b.date) - new Date(a.date);
+      });
       return {groups, costs};
     } else {
       return {groups: [], costs: []};
@@ -33,7 +36,7 @@ class Finance extends DAO {
       id_group: cost.group,
       id_wlist_item: cost.wlistItem,
       period: new Date().toISOString().slice(0,7),
-      date: new Date().toISOString().slice(0,10)
+      date: String(cost.date)
     }
 
     const Candidate = await this.costModel.findOne({id_user});
@@ -53,22 +56,7 @@ class Finance extends DAO {
     }
 
     if (result) {
-      if (cost.wlistItem.toString() !== '0') {
-        const id_wlist = cost.wlistItem;
-        const IUser = await user.getUser(token);
-        const wlistItems = IUser.wlist;
-
-        if(wlistItems) {
-          for(let item of wlistItems) {
-            if (item._id.toString() === id_wlist.toString()) {
-              item.spent = Number(item.spent) + Number(cost.amount);
-            }
-          }
-        }
-
-        IUser.wlist = wlistItems;
-        IUser.save();
-      }
+      this.updateWlistItemSpent(cost, user, token);
     }
 
     return result;
@@ -102,8 +90,39 @@ class Finance extends DAO {
     const user = new User(user_model)
     const id_user = await user.getUserId(token);
     const CostItems = await this.costModel.findOne({id_user});
+    this.deleteSpentCostFromWlistItem(CostItems, id, user, token);
 
-    for (let item of CostItems.items) {
+    let items = CostItems.items.filter(i => i._id.toString() !== id);
+    CostItems.items = items;
+
+    if(CostItems.save()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async updateWlistItemSpent(cost, user, token) {
+    if (cost.wlistItem.toString() !== '0') {
+      const id_wlist = cost.wlistItem;
+      const IUser = await user.getUser(token);
+      const wlistItems = IUser.wlist;
+
+      if(wlistItems) {
+        for(let item of wlistItems) {
+          if (item._id.toString() === id_wlist.toString()) {
+            item.spent = Number(item.spent) + Number(cost.amount);
+          }
+        }
+      }
+
+      IUser.wlist = wlistItems;
+      IUser.save();
+    }
+  }
+
+  async deleteSpentCostFromWlistItem(costs, id, user, token) {
+    for (let item of costs.items) {
       if (item._id.toString() === id) {
         if (item.id_wlist_item.toString() !== '0') {
           const IUser = await user.getUser(token);
@@ -120,17 +139,6 @@ class Finance extends DAO {
         }
       }
     }
-
-    let items = CostItems.items.filter(i => i._id.toString() !== id);
-    CostItems.items = items;
-
-    if(CostItems.save()) {
-
-      return true;
-    } else {
-      return false;
-    }
-
   }
 }
 

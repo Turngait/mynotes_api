@@ -1,21 +1,20 @@
 const DTO = require('../models/dto')
-const User = require('../models/User')
 const user_model = require('../models/user_model')
 const wgroups_model = require('../models/wgroups_model')
 const {validationResult} = require('express-validator/check')
+const Wlist = require('../models/Wlist');
 
 class WlistController {
 
   static async addWlistItem (req, res) {
-    const errors = validationResult(req)
-
+    const errors = validationResult(req);
     if(!errors.isEmpty()) {
-      res.status(422)
-      return res.json({errors})
+      res.status(422);
+      return res.json({errors});
     }
 
-    const response = new DTO()
-    const {name, link, price, text, priority, group} = req.body
+    const response = new DTO();
+    const {name, link, price, text, priority, group, token} = req.body;
     const wlistItem = {
       name,
       text,
@@ -26,112 +25,77 @@ class WlistController {
       spent: 0,
       date: new Date().toISOString().slice(0,10)
     }
+    const wlist = new Wlist(user_model, wgroups_model);
 
-    const {token} = req.body
-    const user = new User(user_model)
-    const iUser = await user.getUser(token)
-    iUser.wlist.push(wlistItem)
-    if (iUser.save()) {
-      res.status(204)
-      response.setData('Success')
-      response.setStatus(204)
-      res.json(response.getResponse())
+    if (wlist.addWlistItem(wlistItem, token)) {
+      res.status(204);
+      response.setData('Success');
+      response.setStatus(204);
+      res.json(response.getResponse());
     } else {
-      res.status(503)
-      response.setStatus(503)
-      response.setStatusText('Server error')
-      res.json(response.getResponse())
+      res.status(503);
+      response.setStatus(503);
+      response.setStatusText('Server error');
+      res.json(response.getResponse());
     }
   }
 
   static async deleteWlistItem (req, res) {
-    const itemId = req.params.id
-    const token = req.params.token
-    const response = new DTO()
-    const user = new User(user_model)
-    const iUser = await user.getUser(token)
-    if (iUser) {
-      let items = iUser.wlist
-      items = items.filter(i => i._id.toString() !== itemId)
-      iUser.wlist = items
-
-      if(iUser.save()) {
-        res.status(204)
-        response.setStatus(204)
-        res.json(response.getResponse())
-      } else {
-        res.status(503)
-        response.setStatus(503)
-        response.setStatusText('Server error')
-        res.json(response.getResponse())
-      }
+    const itemId = req.params.id;
+    const token = req.params.token;
+    const response = new DTO();
+    const wlist = new Wlist(user_model, wgroups_model);
+    if(wlist.deleteWlistitem(itemId, token)) {
+      res.status(204);
+      response.setStatus(204);
+      res.json(response.getResponse());
     } else {
-      res.status(403)
-      response.setStatus(403)
-      response.setStatusText('Access denied')
-      res.json(response.getResponse())
+      res.status(503);
+      response.setStatus(503);
+      response.setStatusText('Server error');
+      res.json(response.getResponse());
     }
   }
 
   static async getAllWlistItems(req, res) {
-    const response = new DTO()
-    const user = new User(user_model)
-  
-    const iUser = await user.getUser(req.params.token)
-  
-    if(iUser) {
-  
-      const wlistGroup = await wgroups_model.findOne({id_user: iUser._id})
-      res.status(200)
-      response.setData({wlists: iUser.wlist, groups: wlistGroup.groups})
-      response.setStatus(200)
-      res.json(response.getResponse())
+    const response = new DTO();
+    const wlist = new Wlist(user_model, wgroups_model);
+    const data = await wlist.getAllWlistItems(req.params.token);
+    if(data) {
+      res.status(200);
+      response.setData({wlists: data.wlists, groups: data.groups});
+      response.setStatus(200);
+      res.json(response.getResponse());
     } else {
-      res.status(503)
-      response.setStatus(503)
-      response.setStatusText('Server error')
-      res.json(response.getResponse())
+      res.status(503);
+      response.setStatus(503);
+      response.setStatusText('Server error');
+      res.json(response.getResponse());
     }
   }
 
   static async addGroup(req, res) {
-    const errors = validationResult(req)
-
+    const errors = validationResult(req);
     if(!errors.isEmpty()) {
-      res.status(422)
-      return res.json({errors})
+      res.status(422);
+      return res.json({errors});
     }
 
-    const response = new DTO()
-    const user = new User(user_model)
+    const response = new DTO();
     const {title, token} = req.body
-    const iUser = await user.getUser(token)
-    const Candidate = await wgroups_model.findOne({id_user: iUser._id})
-    let result = null
+    const wlist = new Wlist(user_model, wgroups_model);
   
-    if (Candidate) {
-      const group = {title}
-      Candidate.groups.push(group)
-      result = await Candidate.save()
+    if (wlist.addWlistGroup(title, token)) {
+      res.status(204);
+      response.setStatus(204);
+      res.json(response.getResponse());
     } else {
-      const Wgroup = new wgroups_model({
-        id_user: iUser._id,
-        groups: [{title}]
-      })
-      result = await Wgroup.save()
-    }
-  
-    if (result) {
-      res.status(204)
-      response.setStatus(204)
-      res.json(response.getResponse())
-    } else {
-      res.status(503)
-      response.setStatus(503)
-      response.setStatusText('Server error')
-      res.json(response.getResponse())
+      res.status(503);
+      response.setStatus(503);
+      response.setStatusText('Server error');
+      res.json(response.getResponse());
     }
   }
 }
 
-module.exports = WlistController
+module.exports = WlistController;

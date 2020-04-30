@@ -16,7 +16,7 @@ exports.addWlistValidators = [
 ]
 
 exports.addWlistGroupValidators = [
-  body('name').isLength({min: 3}).withMessage('Length of title must be more then 3 letters')
+  body('title').isLength({min: 3}).withMessage('Length of title must be more then 3 letters')
 ]
 
 exports.addCostGroupValidators = [
