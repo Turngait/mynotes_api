@@ -10,7 +10,8 @@ Routes:
   Wishlist:
 
   ```
-  get:/wlist/item/:token - Get all wlist's items for user
+  get:/wlist/:token - Get all wlist's items and groups for user
+  
   post:/wlist/item/add - Add wlist's item
   put:/wlist/item/edit/:id - Edit wlist's item by it ID
   delete:/wlist/item/delete/:id/ - Delete w'list item by it ID

@@ -18,7 +18,18 @@ class Finance extends DAO {
       costs.items.sort(function(a,b){
         return new Date(b.date) - new Date(a.date);
       });
-      return {groups, costs};
+      const periods = new Set();
+      costs.items.map((item) => {
+        periods.add(item.date)
+      })
+      const items = [];
+
+      for (let period of periods) {
+        let item = costs.items.filter((item) => item.date === period);
+        items.push({period, items: item})
+      }
+
+      return {groups, costs, items};
     } else {
       return {groups: [], costs: []};
     }

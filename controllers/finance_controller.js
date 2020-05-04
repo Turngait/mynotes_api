@@ -9,7 +9,7 @@ class FinController {
     const finance = new Finance(cost_model, costGroup_model);
     const data = await finance.getAllCostForUser(token);
       if(data.groups && data.costs) {
-        res.json({groups: data.groups.groups, costs: data.costs.items});
+        res.json({groups: data.groups.groups, costs: data.items});
       } else {
         res.json({groups: [], costs: []});
       }
