@@ -26,7 +26,11 @@ class Finance extends DAO {
 
       for (let period of periods) {
         let item = costs.items.filter((item) => item.date === period);
-        items.push({period, items: item})
+        let spentByDay = 0;
+        for (let i of item) {
+          spentByDay += i.amount;
+        }
+        items.push({period, items: item, spentByDay})
       }
 
       return {groups, costs, items};

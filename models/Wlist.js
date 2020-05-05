@@ -13,7 +13,11 @@ class Wlist extends DAO {
     const iUser = await user.getUser(token);
     if(iUser) {
       const wlistGroup = await this.wlistGroupModel.findOne({id_user: iUser._id});
-      return {groups: wlistGroup.groups, wlists: iUser.wlist};
+      const wlists = iUser.wlist;
+      wlists.sort(function(a,b){
+        return new Date(b.date) - new Date(a.date);
+      });
+      return {groups: wlistGroup.groups, wlists};
     } else {
       return false;
     }
