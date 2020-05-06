@@ -5,6 +5,10 @@ const {addCostGroupValidators, addCostItemValidators} = require('../validators')
 
 const router = Router();
 
+router.get('/cost/get/:period/:token', async (req, res) => {
+  FinanceController.getAllCostByPeriod(req, res);
+})
+
 router.get('/cost/get/:token', async (req, res) => {
   FinanceController.getAllCostForUser(req, res);
 })

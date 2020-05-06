@@ -39,6 +39,35 @@ class Finance extends DAO {
     }
   }
 
+  async getCostsByPeriod(period, token) {
+    const user = new User(user_model);
+    const id_user = await user.getUserId(token);
+    const groups = await this.costGroupModel.findOne({id_user});
+    let costs = await this.costModel.findOne({id_user});
+    costs = costs.items.filter((item) => item.period === period);
+
+    costs.sort(function(a,b){
+      return new Date(b.date) - new Date(a.date);
+    });
+
+    const periods = new Set();
+    costs.map((item) => {
+      periods.add(item.date)
+    })
+    const items = [];
+
+    for (let period of periods) {
+      let item = costs.filter((item) => item.date === period);
+      let spentByDay = 0;
+      for (let i of item) {
+        spentByDay += i.amount;
+      }
+      items.push({period, items: item, spentByDay})
+    }
+
+    return {items, groups: groups.groups};
+  }
+
   async addCost(token, cost) {
     let result = null;
     const user = new User(user_model);

@@ -15,6 +15,23 @@ class FinController {
       }
   }
 
+  static async getAllCostByPeriod(req, res) {
+    const {period, token} = req.params;
+    const response = new DTO();
+    const finance = new Finance(cost_model, costGroup_model);
+    const costs = await finance.getCostsByPeriod(period, token);
+
+    if (costs) {
+      res.status(200);
+      response.setStatus(200);
+      response.setData({costs});
+      res.json(response.getResponse());
+    } else {
+      res.status(503)
+      res.json(response.getResponse());
+    }
+  }
+
   static async addCost(req, res) {
     const response = new DTO();
     const {token, cost} = req.body;
