@@ -41,4 +41,8 @@ router.post('/group/add', addCostGroupValidators, async (req, res) => {
   }
 })
 
+router.delete('/group/delete/:id/:token', async (req, res) => {
+  FinanceController.deleteCostGroup(req, res);
+})
+
 module.exports = router;

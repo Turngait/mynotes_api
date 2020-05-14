@@ -64,6 +64,22 @@ class Wlist extends DAO {
     return result;
 
   }
+
+  async deleteWlistGroup(token, id) {
+    const user = new User(this.userModel)
+    const id_user = await user.getUserId(token);
+    if(id_user) {
+      const wlistGroups = await this.wlistGroupModel.findOne({id_user});
+      wlistGroups.groups = wlistGroups.groups.filter(i => i._id.toString() !== id);
+      if (wlistGroups.save()) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
 }
 
 module.exports = Wlist;

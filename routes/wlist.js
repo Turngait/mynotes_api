@@ -20,4 +20,8 @@ router.post('/group/add', addWlistGroupValidators, async (req, res) => {
   WlistController.addGroup(req, res);
 })
 
+router.delete('/group/delete/:id/:token', async (req, res) => {
+  WlistController.deleteWlistGroup(req, res);
+})
+
 module.exports = router;

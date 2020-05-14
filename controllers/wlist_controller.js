@@ -96,6 +96,23 @@ class WlistController {
       res.json(response.getResponse());
     }
   }
+
+  static async deleteWlistGroup(req, res) {
+    const response = new DTO();
+    const {id, token} =req.params;
+    const wlist = new Wlist(user_model, wgroups_model);
+    let result = await wlist.deleteWlistGroup(token, id);
+
+    if(result) {
+      res.status(204);
+      response.setStatus(204);
+    } else {
+      res.status(503);
+      response.setStatus(503);
+      response.setStatusText('Server error');
+    }
+    res.json(response.getResponse())
+  }
 }
 
 module.exports = WlistController;

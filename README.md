@@ -18,7 +18,7 @@ Routes:
 
   get:/wlist/group/:token - Get all wlist's groups
   post:/wlist/group/add - Add wlist's group
-  delete:/wlist/group/:id/:token - Delete group
+  delete:/wlist/group/delete/:id/:token - Delete group
   ```
 
   Finance:
@@ -31,4 +31,5 @@ Routes:
   /fin/cost/delete/:id/:token - Delete cost by ID
 
   /fin/group/add
+  /fin/group/delete/:id/:token
   ```

@@ -146,6 +146,23 @@ class Finance extends DAO {
     }
   }
 
+  async deleteCostGroup(token, id) {
+    const user = new User(user_model)
+    const id_user = await user.getUserId(token);
+    if(id_user) {
+      const costGroups = await this.costGroupModel.findOne({id_user});
+      costGroups.groups = costGroups.groups.filter(i => i._id.toString() !== id);
+      if (costGroups.save()) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+
+  }
+
   async updateWlistItemSpent(cost, user, token) {
     if (cost.wlistItem.toString() !== '0') {
       const id_wlist = cost.wlistItem;

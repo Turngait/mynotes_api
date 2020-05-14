@@ -55,7 +55,7 @@ class FinController {
   }
 
   static async deletCost(req, res) {
-    const response = new DTO()
+    const response = new DTO();
     const {id, token} =req.params;
     const finance = new Finance(cost_model, costGroup_model);
     const result = finance.deleteCost(token, id)
@@ -86,6 +86,23 @@ class FinController {
       response.setStatusText('Server error');
     }
 
+    res.json(response.getResponse())
+  }
+
+  static async deleteCostGroup(req, res) {
+    const response = new DTO();
+    const {id, token} =req.params;
+    const finance = new Finance(cost_model, costGroup_model);
+    let result = await finance.deleteCostGroup(token, id);
+
+    if(result) {
+      res.status(204);
+      response.setStatus(204);
+    } else {
+      res.status(503);
+      response.setStatus(503);
+      response.setStatusText('Server error');
+    }
     res.json(response.getResponse())
   }
 }
