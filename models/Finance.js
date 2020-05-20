@@ -3,10 +3,11 @@ const User = require('./User');
 const user_model = require('./user_model');
 
 class Finance extends DAO {
-  constructor (costModel, costGroupModel) {
+  constructor (costModel, costGroupModel, incomeModel = null) {
     super('Cost');
     this.costModel = costModel;
     this.costGroupModel = costGroupModel;
+    this.incomeModel = incomeModel;
   }
   
   async getAllCostForUser(token) {
@@ -47,7 +48,7 @@ class Finance extends DAO {
     costs = costs.items.filter((item) => item.period === period);
 
     costs.sort(function(a,b){
-      return new Date(b.date) - new Date(a.date);
+      return new Date(a.date) - new Date(b.date);
     });
 
     const periods = new Set();
@@ -55,15 +56,19 @@ class Finance extends DAO {
       periods.add(item.date)
     })
     const items = [];
+    let spentByPeriod = 0;
 
     for (let period of periods) {
       let item = costs.filter((item) => item.date === period);
       let spentByDay = 0;
       for (let i of item) {
         spentByDay += i.amount;
+        spentByPeriod += i.amount;
       }
-      items.push({period, items: item, spentByDay})
+      items.push({period, items: item, spentByDay, spentByThisMonth: spentByPeriod})
     }
+
+    items.reverse();
 
     return {items, groups: groups.groups};
   }

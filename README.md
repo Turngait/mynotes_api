@@ -32,4 +32,8 @@ Routes:
 
   /fin/group/add
   /fin/group/delete/:id/:token
+
+  /fin/income/add - Add item
+  /fin/income/get/:token/:period - Get all incomes for user by period
+  /fin/income/delete/:token/:id - Delete one income
   ```
