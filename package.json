@@ -1,6 +1,6 @@
 {
   "name": "mynotes_api",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "Backend of MyNotes App. Api",
   "main": "server.js",
   "scripts": {

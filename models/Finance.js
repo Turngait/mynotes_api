@@ -84,7 +84,7 @@ class Finance extends DAO {
       amount: cost.amount,
       id_group: cost.group,
       id_wlist_item: cost.wlistItem,
-      period: new Date().toISOString().slice(0,7),
+      period: String(cost.date).substring(0, 7),
       date: String(cost.date)
     }
 
