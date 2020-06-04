@@ -45,4 +45,12 @@ router.delete('/group/delete/:id/:token', async (req, res) => {
   FinanceController.deleteCostGroup(req, res);
 })
 
+router.get('/income/get/:period/:token', async (req, res) => {
+  FinanceController.getAllIncomesByPeriod(req, res);
+})
+
+router.post('/income/add', async (req, res) => {
+  FinanceController.addIncome(req, res);
+})
+
 module.exports = router;

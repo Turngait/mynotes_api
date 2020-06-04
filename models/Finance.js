@@ -206,6 +206,69 @@ class Finance extends DAO {
       }
     }
   }
+
+  async getIncomesByPeriod(period, token) {
+    const user = new User(user_model);
+    const id_user = await user.getUserId(token);
+    let incomes = await this.incomeModel.findOne({id_user});
+    incomes = incomes.items.filter((item) => item.period === period);
+
+    incomes.sort(function(a,b){
+      return new Date(a.date) - new Date(b.date);
+    });
+
+    const periods = new Set();
+    incomes.map((item) => {
+      periods.add(item.date)
+    })
+    const items = [];
+    let incomeByPeriod = 0;
+
+    for (let period of periods) {
+      let item = incomes.filter((item) => item.date === period);
+      let incomeByDay = 0;
+      for (let i of item) {
+        incomeByDay += i.amount;
+        incomeByPeriod += i.amount;
+      }
+      items.push({period, items: item, incomeByDay, incomeByThisMonth: incomeByPeriod})
+    }
+
+    items.reverse();
+
+    return items;
+  }
+
+  async addIncome(income, token) {
+    let result = null;
+    const user = new User(user_model);
+    const id_user = await user.getUserId(token);
+    const Income = {
+      title: income.title,
+      text: income.descrition,
+      period: String(income.date).substring(0, 7),
+      amount: income.amount,
+      date: income.date
+    };
+
+    const Candidate = await this.incomeModel.findOne({id_user});
+
+    if(Candidate) {
+      Candidate.items.push(Income);
+      result = Candidate.save();
+    } else {
+      const incomeItem = new this.incomeModel({
+        id_user,
+        items: [
+          Income
+        ],
+        createdAt: income.date
+      });
+  
+      result = incomeItem.save();
+    }
+    return result;
+  }
 }
 
 module.exports = Finance;
