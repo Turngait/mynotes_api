@@ -28,3 +28,9 @@ exports.addCostItemValidators = [
   body('cost.amount').isNumeric().withMessage('Ammount of cost must be a numeric'),
   body('cost.amount').isLength({min: 1}).withMessage('Ammount of cost must be a numeric')
 ]
+
+exports.addIncomeValidators = [
+  body('income.title').isLength({min: 3}).withMessage('Length of title must be more then 3 letters'),
+  body('income.amount').isNumeric().withMessage('Ammount of cost must be a numeric'),
+  body('income.amount').isLength({min: 1}).withMessage('Ammount of cost must be a numeric')
+]

@@ -1,7 +1,7 @@
 const {Router} = require('express');
 const FinanceController = require('../controllers/finance_controller');
 const {validationResult} = require('express-validator/check');
-const {addCostGroupValidators, addCostItemValidators} = require('../validators')
+const {addCostGroupValidators, addCostItemValidators, addIncomeValidators} = require('../validators')
 
 const router = Router();
 
@@ -49,8 +49,18 @@ router.get('/income/get/:period/:token', async (req, res) => {
   FinanceController.getAllIncomesByPeriod(req, res);
 })
 
-router.post('/income/add', async (req, res) => {
-  FinanceController.addIncome(req, res);
+router.post('/income/add', addIncomeValidators, async (req, res) => {
+  const errors = validationResult(req)
+  if (errors.isEmpty()){
+    FinanceController.addIncome(req, res);
+  } else {
+    res.status(422)
+    res.json({errors})
+  }
+})
+
+router.delete('/income/delete/:token/:id', async (req, res) => {
+  FinanceController.deleteIncome(req, res);
 })
 
 module.exports = router;

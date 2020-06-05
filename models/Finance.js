@@ -269,6 +269,21 @@ class Finance extends DAO {
     }
     return result;
   }
+
+  async deleteIncome(id, token) {
+    const user = new User(user_model);
+    const id_user = await user.getUserId(token);
+    const incomeItems = await this.incomeModel.findOne({id_user});
+
+    let items = incomeItems.items.filter(i => i._id.toString() !== id);
+    incomeItems.items = items;
+
+    if(incomeItems.save()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 module.exports = Finance;
