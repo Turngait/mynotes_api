@@ -2,9 +2,9 @@ Routes:
   Authorization:
 
   ```
-  /auth/signin - SignIn
-
-  /auth/signup - SignUp
+  post: /auth/signin - SignIn
+  post: /auth/signup - SignUp
+  get: /auth/user/:token - get user's info by token
   ```
 
   Wishlist:

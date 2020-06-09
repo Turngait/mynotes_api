@@ -24,6 +24,7 @@ class User extends DAO {
           return {
             name: user.name, 
             email: user.email,
+            balance: user.balance,
             token
           }
         } catch (e) {
@@ -51,6 +52,7 @@ class User extends DAO {
       email: data.email,
       pass,
       paper,
+      balance: 0,
       wlist: [],
       createdAt: date
     })
@@ -78,9 +80,23 @@ class User extends DAO {
   async getUser (token) {
     return await this.model.findOne({token})
   }
+
   async getUserId (token) {
     const candidate = await this.model.findOne({token})
     return candidate._id
+  }
+
+  async getuserInfo(token) {
+    const user = await this.model.findOne({token})
+    if (user) {
+      return {
+        email: user.email,
+        name: user.name,
+        balance: user.balance
+      };
+    } else {
+      return null;
+    }
   }
 }
 

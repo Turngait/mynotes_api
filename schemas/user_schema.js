@@ -5,6 +5,7 @@ module.exports = {
     email: String,
     pass: String,
     paper: String,
+    balance: Number,
     wlist: [
         {
             id: Types.ObjectId,

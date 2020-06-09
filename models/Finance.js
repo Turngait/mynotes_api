@@ -284,6 +284,18 @@ class Finance extends DAO {
       return false;
     }
   }
+
+  async saveBalance(balance, token) {
+    const user = new User(user_model);
+    const IUser = await user.getUser(token) 
+    IUser.balance = balance;
+
+    if (IUser.save()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 module.exports = Finance;

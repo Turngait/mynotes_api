@@ -63,4 +63,9 @@ router.delete('/income/delete/:token/:id', async (req, res) => {
   FinanceController.deleteIncome(req, res);
 })
 
+
+router.post('/balance', async (req, res) => {
+  FinanceController.saveBalance(req, res);
+})
+
 module.exports = router;

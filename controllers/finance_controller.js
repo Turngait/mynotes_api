@@ -157,6 +157,23 @@ class FinController {
     }
     res.json(response.getResponse())
   }
+
+  static async saveBalance(req, res) {
+    const response = new DTO();
+    const {token, balance} = req.body;
+    const finance = new Finance(cost_model, costGroup_model, income_model);
+    const result = finance.saveBalance(balance, token);
+
+    if(result) {
+      res.status(204)
+      response.setStatus(204)
+    } else {
+      res.status(503)
+      response.setStatus(503)
+      response.setStatusText('Server error')
+    }
+    res.json(response.getResponse())
+  }
 }
 
 module.exports = FinController

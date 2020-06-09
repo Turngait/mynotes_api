@@ -52,6 +52,24 @@ class AuthController {
       res.json(response.getResponse())
     }
   }
+
+  static async getUserData(req, res) {
+    const {token} = req.params;
+    const response = new DTO();
+    const user = new User(user_model);
+    const info = await user.getuserInfo(token);
+
+    if (info) {
+      res.status(200)
+      response.setData(info)
+      response.setStatus(200)
+      res.json(response.getResponse())
+    } else {
+      res.status(403)
+      response.setStatus(403)
+      res.json(response.getResponse())
+    }
+  }
 }
 
 module.exports = AuthController

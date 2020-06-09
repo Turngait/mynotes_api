@@ -9,6 +9,10 @@ router.get('/', (req, res) => {
   res.status(403)
 })
 
+router.get('/user/:token', (req, res) => {
+  AuthController.getUserData(req, res)
+})
+
 router.post('/signin', loginValidators, async (req, res) => {
   const errors = validationResult(req)
   if(errors.isEmpty()) {
