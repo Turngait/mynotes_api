@@ -13,6 +13,10 @@ router.get('/cost/get/:token', async (req, res) => {
   FinanceController.getAllCostForUser(req, res);
 })
 
+router.get('/cost/group/:token/:id_group/:period', async (req, res) => {
+  FinanceController.getAllCostByGroup(req, res);
+})
+
 router.post('/cost/add', addCostItemValidators, async (req, res) => {
   const errors = validationResult(req);
   if (errors.isEmpty()){

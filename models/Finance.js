@@ -73,6 +73,43 @@ class Finance extends DAO {
     return {items, groups: groups.groups};
   }
 
+  async getCostsByGroup(id_group, period, token) {
+    const user = new User(user_model);
+    const id_user = await user.getUserId(token);
+    const groups = await this.costGroupModel.findOne({id_user});
+    let costs = await this.costModel.findOne({id_user});
+    let costsByGroup;
+    costs = costs.items.filter((item) => item.period === period);
+    costsByGroup = costs.filter((item) => item.id_group === id_group);
+    costs = costsByGroup;
+    
+
+    costs.sort(function(a,b){
+      return new Date(a.date) - new Date(b.date);
+    });
+
+    const periods = new Set();
+    costs.map((item) => {
+      periods.add(item.date)
+    })
+    const items = [];
+    let spentByPeriod = 0;
+
+    for (let period of periods) {
+      let item = costs.filter((item) => item.date === period);
+      let spentByDay = 0;
+      for (let i of item) {
+        spentByDay += i.amount;
+        spentByPeriod += i.amount;
+      }
+      items.push({period, items: item, spentByDay, spentByThisMonth: spentByPeriod})
+    }
+
+    items.reverse();
+
+    return {items, groups: groups.groups};
+  }
+
   async addCost(token, cost) {
     let result = null;
     const user = new User(user_model);
@@ -105,6 +142,7 @@ class Finance extends DAO {
     }
 
     if (result) {
+      this.__decreaseBalance(cost.amount, token);
       this.updateWlistItemSpent(cost, user, token);
     }
 
@@ -142,9 +180,11 @@ class Finance extends DAO {
     this.deleteSpentCostFromWlistItem(CostItems, id, user, token);
 
     let items = CostItems.items.filter(i => i._id.toString() !== id);
+    let cost = CostItems.items.filter(i => i._id.toString() == id);
     CostItems.items = items;
 
     if(CostItems.save()) {
+      this.__increaseBalance(cost[0].amount, token);
       return true;
     } else {
       return false;
@@ -267,6 +307,9 @@ class Finance extends DAO {
   
       result = incomeItem.save();
     }
+    if (result) {
+      this.__increaseBalance(income.amount, token);
+    }
     return result;
   }
 
@@ -276,9 +319,11 @@ class Finance extends DAO {
     const incomeItems = await this.incomeModel.findOne({id_user});
 
     let items = incomeItems.items.filter(i => i._id.toString() !== id);
+    let income = incomeItems.items.filter(i => i._id.toString() == id);
     incomeItems.items = items;
 
     if(incomeItems.save()) {
+      this.__decreaseBalance(income[0].amount, token);
       return true;
     } else {
       return false;
@@ -287,8 +332,36 @@ class Finance extends DAO {
 
   async saveBalance(balance, token) {
     const user = new User(user_model);
-    const IUser = await user.getUser(token) 
+    const IUser = await user.getUser(token);
     IUser.balance = balance;
+
+    if (IUser.save()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async __decreaseBalance (amount, token) {
+    const user = new User(user_model);
+    const IUser = await user.getUser(token);
+
+    IUser.balance -= amount;
+
+    if (IUser.save()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async __increaseBalance(amount, token) {
+    const user = new User(user_model);
+    const IUser = await user.getUser(token);
+
+    const balance = Number(IUser.balance);
+
+    IUser.balance = balance + Number(amount);
 
     if (IUser.save()) {
       return true;
