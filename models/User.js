@@ -40,7 +40,8 @@ class User extends DAO {
   }
 
   async signUp(data) {
-    if (this.checkUserByEmail(data.email)) {
+    const isUserExist = await this.checkUserByEmail(data.email);
+    if (isUserExist) {
       return 'User exist'
     }
 
@@ -69,7 +70,7 @@ class User extends DAO {
   }
 
   async checkUserByEmail(email) {
-    const user = await this.model.findOne({'email': data.email})
+    const user = await this.model.findOne({'email': email})
     if (user) {
       return true
     } else {
@@ -89,6 +90,7 @@ class User extends DAO {
   async getuserInfo(token) {
     const user = await this.model.findOne({token})
     if (user) {
+      
       return {
         email: user.email,
         name: user.name,
