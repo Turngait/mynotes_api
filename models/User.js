@@ -24,6 +24,7 @@ class User extends DAO {
           return {
             name: user.name, 
             email: user.email,
+            settings: user.settings,
             balance: user.balance,
             token
           }
@@ -54,6 +55,10 @@ class User extends DAO {
       pass,
       paper,
       balance: 0,
+      settings: {
+        local: 'ru',
+        currency: 'RUR'
+      },
       wlist: [],
       createdAt: date
     })

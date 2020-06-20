@@ -6,6 +6,10 @@ module.exports = {
     pass: String,
     paper: String,
     balance: Number,
+    settings: {
+        local: String,
+        currency: String
+    },
     wlist: [
         {
             id: Types.ObjectId,

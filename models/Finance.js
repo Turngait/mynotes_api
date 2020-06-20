@@ -43,32 +43,35 @@ class Finance extends DAO {
   async getCostsByPeriod(period, token) {
     const user = new User(user_model);
     const id_user = await user.getUserId(token);
-    const groups = await this.costGroupModel.findOne({id_user});
-    let costs = await this.costModel.findOne({id_user});
-    costs = costs.items.filter((item) => item.period === period);
-
-    costs.sort(function(a,b){
-      return new Date(a.date) - new Date(b.date);
-    });
-
-    const periods = new Set();
-    costs.map((item) => {
-      periods.add(item.date)
-    })
+    let groups = await this.costGroupModel.findOne({id_user}) || [];
+    let costs = await this.costModel.findOne({id_user}) || [];
     const items = [];
-    let spentByPeriod = 0;
 
-    for (let period of periods) {
-      let item = costs.filter((item) => item.date === period);
-      let spentByDay = 0;
-      for (let i of item) {
-        spentByDay += i.amount;
-        spentByPeriod += i.amount;
+    if (costs.items) {
+      costs = costs.items.filter((item) => item.period === period);
+
+      costs.sort(function(a,b){
+        return new Date(a.date) - new Date(b.date);
+      });
+
+      const periods = new Set();
+      costs.map((item) => {
+        periods.add(item.date)
+      })
+      let spentByPeriod = 0;
+  
+      for (let period of periods) {
+        let item = costs.filter((item) => item.date === period);
+        let spentByDay = 0;
+        for (let i of item) {
+          spentByDay += i.amount;
+          spentByPeriod += i.amount;
+        }
+        items.push({period, items: item, spentByDay, spentByThisMonth: spentByPeriod})
       }
-      items.push({period, items: item, spentByDay, spentByThisMonth: spentByPeriod})
+  
+      items.reverse();
     }
-
-    items.reverse();
 
     return {items, groups: groups.groups};
   }
@@ -250,32 +253,35 @@ class Finance extends DAO {
   async getIncomesByPeriod(period, token) {
     const user = new User(user_model);
     const id_user = await user.getUserId(token);
-    let incomes = await this.incomeModel.findOne({id_user});
-    incomes = incomes.items.filter((item) => item.period === period);
-
-    incomes.sort(function(a,b){
-      return new Date(a.date) - new Date(b.date);
-    });
-
-    const periods = new Set();
-    incomes.map((item) => {
-      periods.add(item.date)
-    })
+    let incomes = await this.incomeModel.findOne({id_user}) || [];
     const items = [];
-    let incomeByPeriod = 0;
 
-    for (let period of periods) {
-      let item = incomes.filter((item) => item.date === period);
-      let incomeByDay = 0;
-      for (let i of item) {
-        incomeByDay += i.amount;
-        incomeByPeriod += i.amount;
+    if(incomes.items) {
+      incomes = incomes.items.filter((item) => item.period === period);
+
+      incomes.sort(function(a,b){
+        return new Date(a.date) - new Date(b.date);
+      });
+
+      const periods = new Set();
+      incomes.map((item) => {
+        periods.add(item.date)
+      })
+      let incomeByPeriod = 0;
+  
+      for (let period of periods) {
+        let item = incomes.filter((item) => item.date === period);
+        let incomeByDay = 0;
+        for (let i of item) {
+          incomeByDay += i.amount;
+          incomeByPeriod += i.amount;
+        }
+        items.push({period, items: item, incomeByDay, incomeByThisMonth: incomeByPeriod})
       }
-      items.push({period, items: item, incomeByDay, incomeByThisMonth: incomeByPeriod})
+  
+      items.reverse();
     }
-
-    items.reverse();
-
+    
     return items;
   }
 
