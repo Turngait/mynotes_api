@@ -5,6 +5,8 @@ Routes:
   post: /auth/signin - SignIn
   post: /auth/signup - SignUp
   get: /auth/user/:token - get user's info by token
+  post: /auth/user/setdata
+  post: /auth/user/changepassword
   ```
 
   Wishlist:

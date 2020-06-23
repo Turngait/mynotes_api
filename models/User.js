@@ -105,6 +105,43 @@ class User extends DAO {
       return null;
     }
   }
+
+  async saveNewUserInfo(data, token) {
+    const user = await this.model.findOne({token});
+    if(user) {
+      user.name = data.name;
+      user.email = data.email;
+
+      if(user.save()) {
+        return 204;
+      } else {
+        return 500;
+      }
+    } else {
+      return 403;
+    }
+  }
+
+  async changePassword(data, token) {
+    const user = await this.model.findOne({token});
+    if (user) {
+      const pass = createPassword(data.old, user.paper);
+      if (pass === user.pass) {
+        const newPass = createPassword(data.new, user.paper);
+        user.pass = newPass;
+  
+        if(user.save()) {
+          return 204;
+        } else {
+          return 500;
+        }
+      } else {
+        return 403;
+      }
+    } else {
+      return 401;
+    }
+  }
 }
 
 module.exports = User

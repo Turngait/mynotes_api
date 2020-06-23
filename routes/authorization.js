@@ -7,11 +7,19 @@ const router = Router()
 
 router.get('/', (req, res) => {
   res.status(403)
-})
+});
 
 router.get('/user/:token', (req, res) => {
   AuthController.getUserData(req, res)
-})
+});
+
+router.post('/user/setdata', (req, res) => {
+  AuthController.saveNewUserData(req, res)
+});
+
+router.post('/user/changepassword', (req, res) => {
+  AuthController.changeNewPassword(req, res)
+});
 
 router.post('/signin', loginValidators, async (req, res) => {
   const errors = validationResult(req)
@@ -21,7 +29,7 @@ router.post('/signin', loginValidators, async (req, res) => {
     res.status(422)
     res.json({errors})
   }
-})
+});
 
 router.post('/signup', signUpValidators, async (req, res) => {
   const errors = validationResult(req)
@@ -31,6 +39,6 @@ router.post('/signup', signUpValidators, async (req, res) => {
     res.status(422)
     res.json({errors})
   }
-})
+});
 
 module.exports = router

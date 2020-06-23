@@ -70,6 +70,48 @@ class AuthController {
       res.json(response.getResponse())
     }
   }
+
+  static async saveNewUserData(req, res) {
+    const response = new DTO();
+    const user = new User(user_model);
+
+    const data = {
+      name: req.body.name,
+      email: req.body.email
+    };
+    const {token} = req.body;
+
+    const answer = await user.saveNewUserInfo(data, token);
+
+    if (answer === 204) {
+      res.status(204)
+      response.setStatus(204)
+      res.json(response.getResponse())
+    } else if (answer === 403) {
+      res.status(403)
+      response.setStatus(403)
+      res.json(response.getResponse())
+    } else {
+      res.status(503)
+      response.setStatus(503)
+      response.setStatusText('Server error')
+      res.json(response.getResponse())
+    }
+
+  }
+
+  static async changeNewPassword(req, res) {
+    const response = new DTO();
+    const user = new User(user_model);
+
+    const answer = await user.changePassword(req.body.pass, req.body.token);
+
+    if(answer === 500) response.setStatusText('Server error');
+
+    res.status(answer);
+    response.setStatus(answer);
+    res.json(response.getResponse());
+  }
 }
 
 module.exports = AuthController
