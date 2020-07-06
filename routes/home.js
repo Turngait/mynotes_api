@@ -1,5 +1,5 @@
 const { Router } = require('express')
-const {API_MAIL} = require('../config/api')
+// const {API_MAIL} = require('../config/api')
 const User = require('../models/user_model')
 const sequelize = require('../mysql/index')
 // const nodemailer = require('nodemailer')
@@ -13,9 +13,9 @@ router.get('/', async (req, res) => {
 
     await sequelize.sync()
 
-    const transporter = nodemailer.createTransport(sendgrid({
-      auth: {api_key: API_MAIL}
-    }))
+    // const transporter = nodemailer.createTransport(sendgrid({
+    //   auth: {api_key: API_MAIL}
+    // }))
     // transporter.sendMail({
     //   to: 'ryzhov.is@mail.ru',
     //   from: 'MyNotes<info@fraktur.ru>',

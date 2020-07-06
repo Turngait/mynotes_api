@@ -1,5 +1,7 @@
-Routes:
-  Authorization:
+# MyNotes API
+
+## Routes:
+  ### Authorization:
 
   ```
   post: /auth/signin - SignIn
@@ -9,7 +11,7 @@ Routes:
   post: /auth/user/changepassword
   ```
 
-  Wishlist:
+  ### Wishlist:
 
   ```
   get:/wlist/:token - Get all wlist's items and groups for user
@@ -23,7 +25,7 @@ Routes:
   delete:/wlist/group/delete/:id/:token - Delete group
   ```
 
-  Finance:
+  ### Finance:
 
   ```
   /fin/cost/get/:token/:period - Get all cost by period for user
@@ -39,4 +41,15 @@ Routes:
   /fin/income/add - Add item
   /fin/income/get/:token/:period - Get all incomes for user by period
   /fin/income/delete/:token/:id - Delete one income
+  ```
+
+
+  ### Notes:
+  ```
+  get: /notes/all/:token - all notes and groups
+  post: /notes/note/add/ - add notes
+  patch: /notes/note/edit/:id/:token - edit note
+  delete: /notes/note/delete/:id/:token - delete note
+  post: /notes/group/add - add group of notes
+  delete: /notes/group/delete/:id/:token
   ```

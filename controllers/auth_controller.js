@@ -1,6 +1,10 @@
-const user_model = require('../models/user_model')
-const User = require('../models/User')
-const DTO = require('../models/dto')
+const user_model = require('../models/user_model');
+const User = require('../models/User');
+const DTO = require('../models/dto');
+const {API_MAIL} = require('../config/api');
+const sendgrid = require('nodemailer-sendgrid-transport');
+const nodemailer = require('nodemailer');
+const {signUpMail} = require('../email/functions');
 
 class AuthController {
   constructor() {
@@ -38,6 +42,13 @@ class AuthController {
         response.setStatus(202)
         response.setStatusText('User created')
         response.setData({})
+
+        const transporter = nodemailer.createTransport(sendgrid({
+          auth: {api_key: API_MAIL}
+        }));
+
+        transporter.sendMail(signUpMail({email: req.body.email, password: req.body.pass}));
+
       } else {
         res.status(500)
         response.setStatus(500)
