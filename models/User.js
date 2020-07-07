@@ -142,6 +142,14 @@ class User extends DAO {
       return 401;
     }
   }
+
+  async setNewPassByEmail(pass, email) {
+    const user = await this.model.findOne({email});
+    if(user) {
+      const newPass = createPassword(pass, user.paper);
+      console.log(newPass);
+    }
+  }
 }
 
 module.exports = User

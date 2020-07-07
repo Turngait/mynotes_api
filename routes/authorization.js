@@ -41,4 +41,12 @@ router.post('/signup', signUpValidators, async (req, res) => {
   }
 });
 
+router.post('/recovery', async(req, res) => {
+  AuthController.sendRecoveryMessage(req, res);
+})
+
+router.post('/setnewpass', async(req, res) => {
+  AuthController.setNewPass(req, res);
+})
+
 module.exports = router

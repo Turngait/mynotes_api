@@ -1,5 +1,5 @@
 const {EMAIL_FROM, APP_NAME} = require('../config/api');
-const {signUpText} = require('./texts');
+const {signUpText, recoveryText} = require('./texts');
 
 module.exports = { 
   signUpMail: (data)  => {
@@ -8,6 +8,14 @@ module.exports = {
       from: EMAIL_FROM,
       subject: 'Регистрация на сайте ' + APP_NAME,
       html: signUpText(data)
+    }
+  },
+  sendRecoveryMessage: (data) => {
+    return {
+      to: data.email,
+      from: EMAIL_FROM,
+      subject: 'Восстановление пароля на сайте ' + APP_NAME,
+      html: recoveryText(data)
     }
   }
 }

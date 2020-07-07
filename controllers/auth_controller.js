@@ -4,7 +4,8 @@ const DTO = require('../models/dto');
 const {API_MAIL} = require('../config/api');
 const sendgrid = require('nodemailer-sendgrid-transport');
 const nodemailer = require('nodemailer');
-const {signUpMail} = require('../email/functions');
+const {signUpMail, sendRecoveryMessage} = require('../email/functions');
+const {createHashForRecovery} = require('../config/security');
 
 class AuthController {
   constructor() {
@@ -122,6 +123,35 @@ class AuthController {
     res.status(answer);
     response.setStatus(answer);
     res.json(response.getResponse());
+  }
+
+  static async sendRecoveryMessage(req, res) {
+    const {email} = req.body;
+    const hash = createHashForRecovery(email);
+    const link = `/setnewpass/${email}/${hash}`;
+
+    const transporter = nodemailer.createTransport(sendgrid({
+      auth: {api_key: API_MAIL}
+    }));
+
+    if(transporter.sendMail(sendRecoveryMessage({email, link}))) {
+      res.json({send: true})
+    } else {
+      res.json({send: false})
+    }
+  }
+  
+  static async setNewPass(req, res) {
+    const response = new DTO();
+    const user = new User(user_model);
+    const {email, hash, pass} = req.body;
+    const secHash = createHashForRecovery(email);
+    if (secHash === hash) {
+      user.setNewPassByEmail(pass, email);
+    }
+
+
+    res.json({isChange: true});
   }
 }
 
