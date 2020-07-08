@@ -1,0 +1,12 @@
+# This file are not using yet
+FROM node:8-alpine
+
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+COPY package.json .
+RUN npm install nodemon --global
+COPY . .
+# Exports
+EXPOSE 8081
+CMD [ "nodemon" ]
