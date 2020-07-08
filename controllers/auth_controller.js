@@ -142,16 +142,20 @@ class AuthController {
   }
   
   static async setNewPass(req, res) {
-    const response = new DTO();
     const user = new User(user_model);
     const {email, hash, pass} = req.body;
     const secHash = createHashForRecovery(email);
     if (secHash === hash) {
-      user.setNewPassByEmail(pass, email);
+      const answer = await user.setNewPassByEmail(pass, email);
+
+      if (answer == 204) {
+        res.status(204)
+        res.json({isChange: true});
+      } else {
+        res.status(500)
+        res.json({isChange: false});
+      }
     }
-
-
-    res.json({isChange: true});
   }
 }
 

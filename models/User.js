@@ -147,7 +147,15 @@ class User extends DAO {
     const user = await this.model.findOne({email});
     if(user) {
       const newPass = createPassword(pass, user.paper);
-      console.log(newPass);
+      user.pass = newPass;
+  
+      if(user.save()) {
+        return 204;
+      } else {
+        return 500;
+      }
+    } else {
+      return 401;
     }
   }
 }
