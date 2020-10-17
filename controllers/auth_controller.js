@@ -8,42 +8,38 @@ const {signUpMail, sendRecoveryMessage} = require('../email/functions');
 const {createHashForRecovery} = require('../config/security');
 
 class AuthController {
-  constructor() {
-
-  }
-
   static async signIn (req, res) {
-    const user = new User(user_model)
-    const answer = await user.signIn(req.body)
-    const response = new DTO()
-    if(answer) {
-      res.status(200)
-      response.setData(answer)
-      response.setStatus(200)
-      res.json(response.getResponse())
+    const user = new User(user_model);
+    const answer = await user.signIn(req.body);
+    const response = new DTO();
+
+    if(answer.status === 200) {
+      response.setData(answer);
     } else {
-      res.status(403)
-      response.setData({'token': false})
-      response.setStatus(403)
-      res.json(response.getResponse())
+      response.setData({'token': false});
     }
+
+    res.status(answer.status);
+    response.setStatus(answer.status);
+    res.json(response.getResponse());
   }
 
   static async signUp(req, res) {
-    const response = new DTO()
-    const user = new User(user_model)
+    const response = new DTO();
+    const user = new User(user_model);
     try {
-      const answer = await user.signUp(req.body)
-      if (answer === 'User exist') {
-        response.setStatus(208)
-        response.setStatusText('User exist')
-        response.setData({})
-      } else if (answer) {
-        res.status(202)
-        response.setStatus(202)
-        response.setStatusText('User created')
-        response.setData({})
+      const answer = await user.signUp(req.body);
+      if (answer.status === 208) {
+        response.setStatus(208);
+        response.setStatusText('User exist');
+        response.setData({});
+      } else if (answer.status === 202) {
+        res.status(202);
+        response.setStatus(202);
+        response.setStatusText('User created');
+        response.setData({});
 
+        // TODO: Move transporter to providers
         const transporter = nodemailer.createTransport(sendgrid({
           auth: {api_key: API_MAIL}
         }));
@@ -69,17 +65,17 @@ class AuthController {
     const {token} = req.params;
     const response = new DTO();
     const user = new User(user_model);
-    const info = await user.getuserInfo(token);
+    const info = await user.getUserInfo(token);
 
     if (info) {
-      res.status(200)
-      response.setData(info)
-      response.setStatus(200)
-      res.json(response.getResponse())
+      res.status(200);
+      response.setData(info);
+      response.setStatus(200);
+      res.json(response.getResponse());
     } else {
-      res.status(403)
-      response.setStatus(403)
-      res.json(response.getResponse())
+      res.status(403);
+      response.setStatus(403);
+      res.json(response.getResponse());
     }
   }
 
@@ -96,18 +92,18 @@ class AuthController {
     const answer = await user.saveNewUserInfo(data, token);
 
     if (answer === 204) {
-      res.status(204)
-      response.setStatus(204)
+      res.status(204);
+      response.setStatus(204);
       res.json(response.getResponse())
     } else if (answer === 403) {
-      res.status(403)
-      response.setStatus(403)
-      res.json(response.getResponse())
+      res.status(403);
+      response.setStatus(403);
+      res.json(response.getResponse());
     } else {
-      res.status(503)
-      response.setStatus(503)
-      response.setStatusText('Server error')
-      res.json(response.getResponse())
+      res.status(503);
+      response.setStatus(503);
+      response.setStatusText('Server error');
+      res.json(response.getResponse());
     }
 
   }
@@ -130,6 +126,7 @@ class AuthController {
     const hash = createHashForRecovery(email);
     const link = `/setnewpass/${email}/${hash}`;
 
+    // TODO Move transporter to providers
     const transporter = nodemailer.createTransport(sendgrid({
       auth: {api_key: API_MAIL}
     }));
@@ -148,15 +145,18 @@ class AuthController {
     if (secHash === hash) {
       const answer = await user.setNewPassByEmail(pass, email);
 
-      if (answer == 204) {
+      if (answer === 204) {
         res.status(204)
         res.json({isChange: true});
       } else {
-        res.status(500)
+        res.status(answer)
         res.json({isChange: false});
       }
+    } else {
+      res.status(403)
+      res.json({isChange: false});
     }
   }
 }
 
-module.exports = AuthController
+module.exports = AuthController;
