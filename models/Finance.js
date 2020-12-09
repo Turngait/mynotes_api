@@ -2,6 +2,7 @@ const DAO = require('./dao');
 const User = require('./User');
 const user_model = require('./user_model');
 
+// TODO Move all Finance to microservice. Improve all dependences
 class Finance extends DAO {
   constructor (costModel, costGroupModel, incomeModel = null) {
     super('Cost');

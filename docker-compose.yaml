@@ -4,6 +4,7 @@ services:
 
   web:
     image: nginx
+    container_name: my-notes-nginx
     restart: always
     links: 
       - db
@@ -12,6 +13,7 @@ services:
 
   node:
     image: "node:8"
+    container_name: my-notes-app
     working_dir: /home/node/app
     volumes:
       - ./:/home/node/app
@@ -19,9 +21,20 @@ services:
       - "8081"
     links:
       - mongo
+      - auth
     command: npm run dev
     ports:
       - 8081:4000
+
+  auth:
+    image: "node:8"
+    container_name: my-notes-auth
+    working_dir: /home/node/app
+    volumes:
+      - ./auth:/home/node/app
+    links:
+      - mongo
+    command: npm run dev
 
   db:
     image: mysql:latest
