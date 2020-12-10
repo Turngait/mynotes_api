@@ -1,12 +1,12 @@
-const user_model = require('../models/user_model');
-const User = require('../models/User');
-const DTO = require('../models/dto');
-const {API_MAIL, AUTH_URL} = require('../config/api');
+const fetch = require('node-fetch');
 const sendgrid = require('nodemailer-sendgrid-transport');
 const nodemailer = require('nodemailer');
+
+const DTO = require('../models/dto');
+const {API_MAIL, AUTH_URL} = require('../config/api');
 const {signUpMail, sendRecoveryMessage} = require('../email/functions');
 const {createHashForRecovery} = require('../config/security');
-const fetch = require('node-fetch');
+
 
 
 class AuthController {
@@ -118,15 +118,19 @@ class AuthController {
   }
 
   static async changeNewPassword(req, res) {
+    const { status } = await fetch(AUTH_URL + 'changepassword', {
+      method: 'POST',
+      body: JSON.stringify({...req.body}),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(res => res.json());
+
     const response = new DTO();
-    const user = new User(user_model);
 
-    const answer = await user.changePassword(req.body.pass, req.body.token);
+    if(status === 500) response.setStatusText('Server error');
 
-    if(answer === 500) response.setStatusText('Server error');
-
-    res.status(answer);
-    response.setStatus(answer);
+    res.status(status);
+    response.setStatus(status);
     res.json(response.getResponse());
   }
 
@@ -148,17 +152,21 @@ class AuthController {
   }
   
   static async setNewPass(req, res) {
-    const user = new User(user_model);
-    const {email, hash, pass} = req.body;
+    const {email, hash} = req.body;
     const secHash = createHashForRecovery(email);
     if (secHash === hash) {
-      const answer = await user.setNewPassByEmail(pass, email);
+      const { status } = await fetch(AUTH_URL + 'recoverypassword', {
+        method: 'POST',
+        body: JSON.stringify({...req.body}),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => res.json());
 
-      if (answer === 204) {
+      if (status === 204) {
         res.status(204)
         res.json({isChange: true});
       } else {
-        res.status(answer)
+        res.status(status)
         res.json({isChange: false});
       }
     } else {

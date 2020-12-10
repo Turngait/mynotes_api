@@ -1,6 +1,6 @@
 const DAO = require('./dao');
-const User = require('./User');
 const user_model = require('./user_model');
+const {getUserId} = require('../utils/user');
 
 // TODO Move all Finance to microservice. Improve all dependences
 class Finance extends DAO {
@@ -12,8 +12,7 @@ class Finance extends DAO {
   }
   
   async getAllCostForUser(token) {
-    const user = new User(user_model);
-    const id_user = await user.getUserId(token);
+    const id_user = await getUserId(token);
     if (id_user) {
       const groups = await this.costGroupModel.findOne({id_user});
       const costs = await this.costModel.findOne({id_user});
@@ -42,8 +41,7 @@ class Finance extends DAO {
   }
 
   async getCostsByPeriod(period, token) {
-    const user = new User(user_model);
-    const id_user = await user.getUserId(token);
+    const id_user = await getUserId(token);
     let groups = await this.costGroupModel.findOne({id_user}) || [];
     let costs = await this.costModel.findOne({id_user}) || [];
     const items = [];
@@ -78,8 +76,7 @@ class Finance extends DAO {
   }
 
   async getCostsByGroup(id_group, period, token) {
-    const user = new User(user_model);
-    const id_user = await user.getUserId(token);
+    const id_user = await getUserId(token);
     const groups = await this.costGroupModel.findOne({id_user});
     let costs = await this.costModel.findOne({id_user});
     let costsByGroup;
@@ -114,50 +111,11 @@ class Finance extends DAO {
     return {items, groups: groups.groups};
   }
 
-  async addCost(token, cost) {
-    let result = null;
-    const user = new User(user_model);
-    const id_user = await user.getUserId(token);
 
-    const Cost = {
-      title: cost.title,
-      descrition: cost.descrition,
-      amount: cost.amount,
-      id_group: cost.group,
-      id_wlist_item: cost.wlistItem,
-      period: String(cost.date).substring(0, 7),
-      date: String(cost.date)
-    }
-
-    const Candidate = await this.costModel.findOne({id_user});
-
-    if (Candidate) {
-      Candidate.items.push(Cost)
-      result = Candidate.save();
-    } else {
-      const costItem = new this.costModel({
-        id_user,
-        items:[
-          Cost
-        ],
-        createdAt: new Date().toISOString().slice(0,10)
-      });
-      result = costItem.save();
-    }
-
-    if (result) {
-      this.__decreaseBalance(cost.amount, token);
-      this.updateWlistItemSpent(cost, user, token);
-    }
-
-    return result;
-
-  }
 
   async addCostGroup(token, groupTitle) {
     let result = null;
-    const user = new User(user_model);
-    const id_user = await user.getUserId(token);
+    const id_user = await getUserId(token);
     const Candidate = await this.costGroupModel.findOne({id_user});
 
     if (Candidate) {
@@ -177,27 +135,8 @@ class Finance extends DAO {
     return result;
   }
 
-  async deleteCost(token, id) {
-    const user = new User(user_model)
-    const id_user = await user.getUserId(token);
-    const CostItems = await this.costModel.findOne({id_user});
-    this.deleteSpentCostFromWlistItem(CostItems, id, user, token);
-
-    let items = CostItems.items.filter(i => i._id.toString() !== id);
-    let cost = CostItems.items.filter(i => i._id.toString() == id);
-    CostItems.items = items;
-
-    if(CostItems.save()) {
-      this.__increaseBalance(cost[0].amount, token);
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   async deleteCostGroup(token, id) {
-    const user = new User(user_model)
-    const id_user = await user.getUserId(token);
+    const id_user = await getUserId(token);
     if(id_user) {
       const costGroups = await this.costGroupModel.findOne({id_user});
       costGroups.groups = costGroups.groups.filter(i => i._id.toString() !== id);
@@ -212,48 +151,9 @@ class Finance extends DAO {
 
   }
 
-  async updateWlistItemSpent(cost, user, token) {
-    if (cost.wlistItem.toString() !== '0') {
-      const id_wlist = cost.wlistItem;
-      const IUser = await user.getUser(token);
-      const wlistItems = IUser.wlist;
-
-      if(wlistItems) {
-        for(let item of wlistItems) {
-          if (item._id.toString() === id_wlist.toString()) {
-            item.spent = Number(item.spent) + Number(cost.amount);
-          }
-        }
-      }
-
-      IUser.wlist = wlistItems;
-      IUser.save();
-    }
-  }
-
-  async deleteSpentCostFromWlistItem(costs, id, user, token) {
-    for (let item of costs.items) {
-      if (item._id.toString() === id) {
-        if (item.id_wlist_item.toString() !== '0') {
-          const IUser = await user.getUser(token);
-          const id_wlist = item.id_wlist_item.toString();
-          const wlists = IUser.wlist
-
-          for (let wlist of wlists) {
-            if(wlist._id.toString() === id_wlist) {
-              wlist.spent = Number(wlist.spent) - Number(item.amount)
-            }
-          }
-          IUser.wlist = wlists;
-          IUser.save()
-        }
-      }
-    }
-  }
 
   async getIncomesByPeriod(period, token) {
-    const user = new User(user_model);
-    const id_user = await user.getUserId(token);
+    const id_user = await getUserId(token);
     let incomes = await this.incomeModel.findOne({id_user}) || [];
     const items = [];
 
@@ -288,8 +188,7 @@ class Finance extends DAO {
 
   async addIncome(income, token) {
     let result = null;
-    const user = new User(user_model);
-    const id_user = await user.getUserId(token);
+    const id_user = await getUserId(token);
     const Income = {
       title: income.title,
       text: income.descrition,
@@ -321,8 +220,7 @@ class Finance extends DAO {
   }
 
   async deleteIncome(id, token) {
-    const user = new User(user_model);
-    const id_user = await user.getUserId(token);
+    const id_user = await getUserId(token);
     const incomeItems = await this.incomeModel.findOne({id_user});
 
     let items = incomeItems.items.filter(i => i._id.toString() !== id);
@@ -338,8 +236,7 @@ class Finance extends DAO {
   }
 
   async saveBalance(balance, token) {
-    const user = new User(user_model);
-    const IUser = await user.getUser(token);
+    const IUser = await user_model.findOne({token});
     IUser.balance = balance;
 
     if (IUser.save()) {
@@ -350,8 +247,7 @@ class Finance extends DAO {
   }
 
   async __decreaseBalance (amount, token) {
-    const user = new User(user_model);
-    const IUser = await user.getUser(token);
+    const IUser = await user_model.findOne({token});
 
     IUser.balance -= amount;
 
@@ -363,8 +259,7 @@ class Finance extends DAO {
   }
 
   async __increaseBalance(amount, token) {
-    const user = new User(user_model);
-    const IUser = await user.getUser(token);
+    const IUser = await user_model.findOne({token});
 
     const balance = Number(IUser.balance);
 

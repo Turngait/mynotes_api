@@ -5,12 +5,12 @@ module.exports = {
   id_user: String,
   items: [
     {
+      period: String,
       id: Types.ObjectId,
       title: String,
       descrition: String,
       amount: Number,
       id_group: String,
-      id_wlist_item: String,
       period: String,
       date: String
     }

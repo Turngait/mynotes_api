@@ -33,7 +33,20 @@ router.post('/setuserdata', async (req, res) => {
 });
 
 router.post('/changepassword', async (req, res) => {
-  console.log(req.body)
-})
+  const id = await User.getUserIdByToken(req.body.token);
+  const status = await User.changeUserPassword(req.body.pass.old, req.body.pass.new, id);
+  res.json({status});
+});
+
+router.post('/recoverypassword', async (req, res) => {
+  const id = await User.getUserByEmail(req.body.email);
+  const status = await User.setPasswordInRecovery(req.body.pass, id);
+  res.json({status});
+});
+
+router.post('/getuserid', async (req, res) => {
+  const id = await User.getUserIdByToken(req.body.token);
+  res.json({id});
+});
 
 module.exports = router;

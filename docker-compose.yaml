@@ -22,6 +22,7 @@ services:
     links:
       - mongo
       - auth
+      - fin
     command: npm run dev
     ports:
       - 8081:4000
@@ -32,6 +33,16 @@ services:
     working_dir: /home/node/app
     volumes:
       - ./auth:/home/node/app
+    links:
+      - mongo
+    command: npm run dev
+  
+  fin:
+    image: "node:8"
+    container_name: my-notes-fin
+    working_dir: /home/node/app
+    volumes:
+      - ./fin:/home/node/app
     links:
       - mongo
     command: npm run dev
