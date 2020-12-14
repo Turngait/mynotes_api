@@ -9,10 +9,6 @@ router.get('/cost/get/:period/:token', async (req, res) => {
   FinanceController.getAllCostByPeriod(req, res);
 })
 
-router.get('/cost/get/:token', async (req, res) => {
-  FinanceController.getAllCostForUser(req, res);
-})
-
 router.get('/cost/group/:token/:id_group/:period', async (req, res) => {
   FinanceController.getAllCostByGroup(req, res);
 })

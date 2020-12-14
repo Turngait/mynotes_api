@@ -1,7 +1,7 @@
 const { Router } = require('express')
 // const {API_MAIL} = require('../config/api')
 // const User = require('../models/user_model')
-const sequelize = require('../mysql/index')
+// const sequelize = require('../mysql/index')
 var fetch = require('node-fetch');
 // const nodemailer = require('nodemailer')
 // const sendgrid = require('nodemailer-sendgrid-transport')
@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
     // const users = await User.find({email: 'wulzin.t@gmail.com'})
     // console.log(users)
 
-    await sequelize.sync();
+    // await sequelize.sync();
     if (finStatus) console.log('Fin server is alive');
     if (authStatus) console.log('Auth server is alive');
 

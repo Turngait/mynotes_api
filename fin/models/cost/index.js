@@ -9,6 +9,12 @@ class Costs {
     return {costs: normalizeCosts(costs), groups: groups.groups || []};
   }
 
+  static async getCostsForGroupAndPeriod(period, id_group, id_user) {
+    const costs =  await costModel.find({id_user, id_group, period}) || [];
+    const groups = await costGroupModel.findOne({id_user}) || [];
+    return {costs: normalizeCosts(costs), groups: groups.groups || []};
+  }
+
   static async addCost(cost, id_user) {
     const newCost = new costModel({
       id_user,
@@ -40,6 +46,47 @@ class Costs {
         return 403;
       }
     } catch (err) {
+      console.log(err)
+      return 500;
+    }
+  }
+
+  static async addGroup(group_title, id_user) {
+    try {
+      const Candidate = await costGroupModel.findOne({id_user});
+
+      if (Candidate) {
+        const group = {title: group_title}
+        Candidate.groups.push(group)
+        await Candidate.save();
+      } else {
+        const costGroup = new costGroupModel({
+          id_user,
+          groups: [{
+            title: group_title
+          }]
+        });
+        costGroup.save();
+      }
+
+      return 204;
+    } catch(error) {
+      console.log(error);
+      return 500;
+    }
+  }
+
+  static async deleteGroup(id, id_user) {
+    try {
+      const costGroups = await costGroupModel.findOne({id_user});
+      if(costGroups) {
+        costGroups.groups = costGroups.groups.filter(i => i._id.toString() !== id);
+        costGroups.save();
+        return 204;
+      } else {
+        return 403;
+      }
+    } catch(err) {
       console.log(err)
       return 500;
     }

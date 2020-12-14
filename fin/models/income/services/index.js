@@ -1,14 +1,14 @@
-function normalizeCosts (costs) {
-  if (costs.length > 0) {
+function normalizeIncomes (incomes) {
+  if (incomes.length > 0) {
     const items = [];
     const periods = new Set();
-    costs.map((item) => {
+    incomes.map((item) => {
       periods.add(item.date)
     });
     let spentByPeriod1 = 0;
 
     for (let period of periods) {
-      let item = costs.filter((item) => item.date === period);
+      let item = incomes.filter((item) => item.date === period);
       let spentByDay = 0;
       for (let i of item) {
         spentByDay += i.amount;
@@ -16,14 +16,13 @@ function normalizeCosts (costs) {
       }
       items.push({period, items: item, spentByDay, spentByThisMonth: spentByPeriod1})
     }
-
     return items;
   }
   else {
-    return costs;
+    return incomes;
   }
 }
 
 module.exports = {
-  normalizeCosts
+  normalizeIncomes
 }
