@@ -1,11 +1,13 @@
 const express = require('express');
 const cors = require('cors');
-const { PORT } = require('./config/api');
 const mongoose = require('mongoose');
+
+const { PORT } = require('./config/api');
 const {urlLocal} = require('./config/mongo');
 const homeRouter = require('./routes/home');
 const costRouter = require('./routes/cost');
 const incomeRouter = require('./routes/income');
+const budgetRouter = require('./routes/budget');
 const app = express();
 
 app.use(cors());
@@ -18,6 +20,7 @@ app.use(express.json({
 app.use('/', homeRouter);
 app.use('/costs', costRouter);
 app.use('/incomes', incomeRouter);
+app.use('/budget', budgetRouter);
 
 const start = async (app) => {
   // TODO: Move to providers

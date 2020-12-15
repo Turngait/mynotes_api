@@ -61,9 +61,10 @@ class User {
     });
 
     try {
-      await user.save();
+      const userData = await user.save();
       return {
-        status: 202
+        status: 202,
+        userData
       };
     } catch (e) {
       console.log(e);

@@ -6,6 +6,7 @@ const DTO = require('../models/dto');
 const {API_MAIL, AUTH_URL} = require('../config/api');
 const {signUpMail, sendRecoveryMessage} = require('../email/functions');
 const {createHashForRecovery} = require('../config/security');
+const {createBudget} = require('../utils/budget');
 
 
 
@@ -37,7 +38,7 @@ class AuthController {
       body: JSON.stringify(req.body),
       headers: { 'Content-Type': 'application/json' }
     })
-    .then(res => res.json())
+    .then(res => res.json());
 
     const response = new DTO();
     if (data.status === 208) {
@@ -45,17 +46,25 @@ class AuthController {
       response.setStatusText('User exist');
       response.setData({});
     } else if (data.status === 202) {
-      res.status(202);
-      response.setStatus(202);
-      response.setStatusText('User created');
-      response.setData({});
+      const status = await createBudget(data.userData._id);
 
+      if(status === 500) {
+        res.status(500)
+        response.setStatus(500)
+        response.setStatusText('Server error')
+        response.setData({})
+      } else {
+        res.status(202);
+        response.setStatus(202);
+        response.setStatusText('User created');
+        response.setData({});
+      }
       // TODO: Move transporter to providers
-      const transporter = nodemailer.createTransport(sendgrid({
-        auth: {api_key: API_MAIL}
-      }));
+      // const transporter = nodemailer.createTransport(sendgrid({
+      //   auth: {api_key: API_MAIL}
+      // }));
 
-      transporter.sendMail(signUpMail({email: req.body.email, password: req.body.pass}));
+      // transporter.sendMail(signUpMail({email: req.body.email, password: req.body.pass}));
 
     } else {
       res.status(500)

@@ -39,9 +39,10 @@ class Costs {
   static async deleteCost(id_cost, id_user) {
     try {
       const cost = await costModel.findOne({_id: id_cost, id_user});
+      const amount = cost.amount;
       if(cost) {
         await costModel.deleteOne({_id: id_cost, id_user});
-        return 204;
+        return {status: 204, amount};
       } else {
         return 403;
       }
