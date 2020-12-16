@@ -5,16 +5,16 @@ function normalizeIncomes (incomes) {
     incomes.map((item) => {
       periods.add(item.date)
     });
-    let spentByPeriod1 = 0;
+    let gainByPeriod = 0;
 
     for (let period of periods) {
       let item = incomes.filter((item) => item.date === period);
-      let spentByDay = 0;
+      let gainByDay = 0;
       for (let i of item) {
-        spentByDay += i.amount;
-        spentByPeriod1 += i.amount;
+        gainByDay += i.amount;
+        gainByPeriod += i.amount;
       }
-      items.push({period, items: item, spentByDay, spentByThisMonth: spentByPeriod1})
+      items.push({period, items: item, gainByDay, gainByPeriod})
     }
     return items;
   }

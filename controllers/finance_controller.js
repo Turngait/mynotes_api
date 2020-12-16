@@ -6,6 +6,20 @@ const {getUserId} = require('../utils/user');
 
 class FinController {
 
+  static async getAllDataForPeriod(req, res) {
+    const {period, token} = req.body;
+    const id_user = await getUserId(token);
+
+    const { costs, incomes, budget } = await fetch(FIN_URL + 'getalldata', {
+      method: 'POST',
+      body: JSON.stringify({period, id_user}),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(res => res.json());
+
+    res.json({costs, incomes, budget});
+  }
+
   static async getAllCostByPeriod(req, res) {
     const {period, token} = req.params;
     const id_user = await getUserId(token);

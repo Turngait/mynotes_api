@@ -66,6 +66,16 @@ class Budget {
       return 500;
     }
   }
+
+  static async getBudget(id_user) {
+    try {
+      const budget = await budgetModel.findOne({id_user});
+      return {status: 200, budget: {balance: budget.balance, items: budget.items}};
+    } catch (error) {
+      console.log(error)
+      return {status: 500, budget: null};
+    }
+  }
 }
 
 module.exports = Budget;

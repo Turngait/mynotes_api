@@ -13,6 +13,18 @@ async function createBudget(id_user) {
   return statusBalance;
 }
 
+async function getBudget(id_user) {
+  const {budget} = await fetch(FIN_URL + 'budget/get', {
+    method: 'POST',
+    body: JSON.stringify({id_user}),
+    headers: { 'Content-Type': 'application/json' }
+  })
+  .then(res => res.json());
+
+  return budget;
+}
+
 module.exports = {
-  createBudget
+  createBudget,
+  getBudget
 }

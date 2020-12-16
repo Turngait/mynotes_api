@@ -80,7 +80,8 @@ class User {
       return {
         email: user.email,
         name: user.name,
-        balance: user.balance
+        balance: user.balance,
+        id: user._id
       };
     } else {
       return null;

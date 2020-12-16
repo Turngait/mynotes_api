@@ -1,9 +1,13 @@
 const {Router} = require('express');
 const FinanceController = require('../controllers/finance_controller');
 const {validationResult} = require('express-validator/check');
-const {addCostGroupValidators, addCostItemValidators, addIncomeValidators} = require('../validators')
+const {addCostGroupValidators, addCostItemValidators, addIncomeValidators} = require('../validators');
 
 const router = Router();
+
+router.post('/getfindata', async (req, res) => {
+  FinanceController.getAllDataForPeriod(req, res);
+});
 
 router.get('/cost/get/:period/:token', async (req, res) => {
   FinanceController.getAllCostByPeriod(req, res);
