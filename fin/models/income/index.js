@@ -13,7 +13,7 @@ class Income {
       id_user,
       period: String(income.date).substring(0, 7),
       title: income.title,
-      description: income.descrition,
+      description: income.description,
       amount: income.amount,
       date: income.date,
       createdAt: new Date()

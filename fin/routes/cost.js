@@ -18,14 +18,14 @@ router.post('/costsforgroupandperiod', async (req, res) => {
 router.post('/addcost', async (req, res) => {
   const {cost, id_user} = req.body;
   const status = await Costs.addCost(cost, id_user);
-  await Budget.increaseBudget(id_user, '5fd869d627c337012df8c64d', +cost.amount);
+  await Budget.increaseBudget(id_user, cost.budget, +cost.amount);
   res.json({status})
 });
 
 router.post('/deletecost', async (req, res) => {
   const {id_cost, id_user} = req.body;
-  const {status, amount} = await Costs.deleteCost(id_cost, id_user);
-  await Budget.decreaseBudget(id_user, '5fd869d627c337012df8c64d', amount);
+  const {status, amount, id_budget} = await Costs.deleteCost(id_cost, id_user);
+  await Budget.decreaseBudget(id_user, id_budget, amount);
   res.json({status});
 });
 

@@ -16,11 +16,13 @@ class Costs {
   }
 
   static async addCost(cost, id_user) {
+    console.log(cost)
     const newCost = new costModel({
       id_user,
       period: String(cost.date).substring(0, 7),
       title: cost.title,
-      descrition: cost.descrition,
+      description: cost.description,
+      id_budget: cost.budget,
       amount: cost.amount,
       id_group: cost.group,
       date: cost.date,
@@ -40,15 +42,16 @@ class Costs {
     try {
       const cost = await costModel.findOne({_id: id_cost, id_user});
       const amount = cost.amount;
+      const id_budget = cost.id_budget;
       if(cost) {
         await costModel.deleteOne({_id: id_cost, id_user});
-        return {status: 204, amount};
+        return {status: 204, amount, id_budget};
       } else {
-        return 403;
+        return {status: 403, amount: null, id_budget: null};
       }
     } catch (err) {
       console.log(err)
-      return 500;
+      return {status: 500, amount: null, id_budget: null};
     }
   }
 
