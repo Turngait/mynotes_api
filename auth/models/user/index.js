@@ -45,12 +45,14 @@ class User {
     const paper = createPaper();
     const pass = createPassword(data.pass, paper);
     const date = dateNow();
+    const token = createToken();
 
     const user = new userModel({
       name: data.name,
       email: data.email,
       pass,
       paper,
+      token,
       balance: 0,
       settings: {
         local: 'ru',
