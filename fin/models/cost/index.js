@@ -4,7 +4,7 @@ const {normalizeCosts} = require('./services');
 
 class Costs {
   static async getCostsForPeriod(period, id_user) {
-    const costs =  await costModel.find({id_user, period}) || [];
+    const costs =  await costModel.find({id_user, period}).sort('-date') || [];
     const groups = await costGroupModel.findOne({id_user}) || [];
     return {costs: normalizeCosts(costs), groups: groups.groups || []};
   }

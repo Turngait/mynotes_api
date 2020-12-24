@@ -4,6 +4,8 @@ module.exports = {
   title: String,
   description: String,
   amount: Number,
+  id_source: String,
+  id_budget: String,
   date: String,
   createdAt: String
 }

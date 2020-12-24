@@ -54,7 +54,7 @@ class User {
       balance: 0,
       settings: {
         local: 'ru',
-        currency: 'RUR'
+        currency: 'Руб'
       },
       wlist: [],
       createdAt: date

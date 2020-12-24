@@ -2,7 +2,7 @@ const {Types} = require('mongoose');
 
 module.exports = {
   id_user: String,
-  groups: [
+  sources: [
     {
       id: Types.ObjectId,
       title: String,

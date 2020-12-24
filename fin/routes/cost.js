@@ -18,14 +18,14 @@ router.post('/costsforgroupandperiod', async (req, res) => {
 router.post('/addcost', async (req, res) => {
   const {cost, id_user} = req.body;
   const status = await Costs.addCost(cost, id_user);
-  await Budget.increaseBudget(id_user, cost.budget, +cost.amount);
+  await Budget.decreaseBudget(id_user, cost.budget, +cost.amount);
   res.json({status})
 });
 
 router.post('/deletecost', async (req, res) => {
   const {id_cost, id_user} = req.body;
   const {status, amount, id_budget} = await Costs.deleteCost(id_cost, id_user);
-  await Budget.decreaseBudget(id_user, id_budget, amount);
+  await Budget.increaseBudget(id_user, id_budget, amount);
   res.json({status});
 });
 
@@ -40,6 +40,6 @@ router.post('/groupdelete', async (req, res) => {
   const {id, id_user} = req.body;
   const status = await Costs.deleteGroup(id, id_user);
   res.json({status});
-})
+});
 
 module.exports = router;

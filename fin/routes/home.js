@@ -17,6 +17,17 @@ router.post('/getalldata', async (req, res) => {
   const incomes = await Income.getIncomesForPeriod(period, id_user);
   const {budget} = await Budget.getBudget(id_user);
   res.json({costs, incomes, budget});
+});
+
+router.post('/newuser', async (req, res) => {
+  const {id_user} = req.body;
+  const statusBalance = await Budget.createBudget(id_user);
+  const statusGroup = await Costs.addGroup('Общая', id_user);
+  const statusSource = await Income.addSource('Основной', id_user);
+  let status = 500;
+
+  if(statusBalance === 202 && statusGroup === 204 && statusSource === 204) status = 204;
+  res.json({status});
 })
 
 module.exports = router;

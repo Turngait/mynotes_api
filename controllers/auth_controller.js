@@ -3,7 +3,7 @@ const sendgrid = require('nodemailer-sendgrid-transport');
 const nodemailer = require('nodemailer');
 
 const DTO = require('../models/dto');
-const {API_MAIL, AUTH_URL} = require('../config/api');
+const {API_MAIL, AUTH_URL, FIN_URL} = require('../config/api');
 const {signUpMail, sendRecoveryMessage} = require('../email/functions');
 const {createHashForRecovery} = require('../config/security');
 const {createBudget, getBudget} = require('../utils/budget');
@@ -46,7 +46,13 @@ class AuthController {
       response.setStatusText('User exist');
       response.setData({});
     } else if (data.status === 202) {
-      const status = await createBudget(data.userData._id);
+
+      const {status} = await fetch(FIN_URL + 'newuser', {
+        method: 'POST',
+        body: JSON.stringify({id_user: data.userData._id}),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => res.json());
 
       if(status === 500) {
         res.status(500)
@@ -60,11 +66,11 @@ class AuthController {
         response.setData({});
       }
       // TODO: Move transporter to providers
-      const transporter = nodemailer.createTransport(sendgrid({
-        auth: {api_key: API_MAIL}
-      }));
+      // const transporter = nodemailer.createTransport(sendgrid({
+      //   auth: {api_key: API_MAIL}
+      // }));
 
-      transporter.sendMail(signUpMail({email: req.body.email, password: req.body.pass}));
+      // transporter.sendMail(signUpMail({email: req.body.email, password: req.body.pass}));
 
     } else {
       res.status(500)
