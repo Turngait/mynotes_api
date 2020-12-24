@@ -56,7 +56,6 @@ class User {
         local: 'ru',
         currency: 'Руб'
       },
-      wlist: [],
       createdAt: date
     });
 

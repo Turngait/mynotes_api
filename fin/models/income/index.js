@@ -38,13 +38,13 @@ class Income {
       const income = await incomeModel.findOne({_id: id, id_user});
       if(income) {
         await incomeModel.deleteOne({_id: id, id_user});
-        return 204;
+        return {status: 204, amount: income.amount, budget: income.id_budget};
       } else {
-        return 403;
+        return {status: 403, amount: null, budget: null};
       }
     } catch(error) {
       console.log(error)
-      return 500;
+      return {status: 500, amount: null, budget: null};
     }
   }
 
@@ -69,6 +69,23 @@ class Income {
       return 204;
     } catch(error) {
       console.log(error);
+      return 500;
+    }
+  }
+
+  static async deleteSource(id_source, id_user) {
+    try {
+      const source = await sourceModel.findOne({id_user});
+
+      if(source) {
+        source.sources = source.sources.filter(i => i._id.toString() !== id_source);
+        source.save();
+        return 204;
+      } else {
+        return 403;
+      }
+    } catch(err) {
+      console.log(err);
       return 500;
     }
   }
