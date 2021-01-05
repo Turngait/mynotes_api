@@ -224,6 +224,24 @@ class FinController {
   static async saveBalance(req, res) {
 
   }
+
+  static async addBudget(req, res) {
+    const response = new DTO();
+    const {budget, token} = req.body;
+    const id_user = await getUserId(token);
+
+    const {status} = await fetch(FIN_URL + 'budget/add', {
+      method: 'POST',
+      body: JSON.stringify({budget, id_user}),
+      headers: {'Content-Type': 'application/json' }
+    }).then(res => res.json());
+
+    if(status === 500) response.setStatusText('Server error');
+    response.setStatus(status);
+    res.status(status);
+
+    res.json(response.getResponse());
+  }
 }
 
 module.exports = FinController

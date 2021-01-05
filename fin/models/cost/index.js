@@ -16,7 +16,6 @@ class Costs {
   }
 
   static async addCost(cost, id_user) {
-    console.log(cost)
     const newCost = new costModel({
       id_user,
       period: String(cost.date).substring(0, 7),

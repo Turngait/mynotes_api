@@ -27,6 +27,36 @@ class Budget {
     }
   }
 
+  static async addBudget(budget, id_user) {
+    const budgets = await budgetModel.findOne({id_user});
+    if(budgets) {
+      budgets.items.push(budget);
+      budgets.balance += +budget.balance;
+      try {
+        budgets.save();
+        return 204;
+      } catch (error) {
+        console.log(error);
+        return 500;
+      }
+    } else {
+      const newBudget = new budgetModel({
+        id_user,
+        balance: budget.balance,
+        items: [
+          budget
+        ]
+      });
+      try {
+        await newBudget.save();
+        return 204;
+      } catch (error) {
+        console.log(error);
+        return 500;
+      }
+    }
+  }
+
   static async increaseBudget(id_user, id_budget, amount) {
     try {
       const budgets = await budgetModel.findOne({id_user});

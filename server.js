@@ -5,6 +5,7 @@ const { PORT } = require('./config/api');
 const homeRouter = require('./routes/home');
 const authRouter = require('./routes/authorization');
 const finRouter = require('./routes/finance');
+const budgetRouter = require('./routes/budget');
 const app = express();
 
 app.use(cors());
@@ -17,6 +18,7 @@ app.use(express.json({
 app.use('/', homeRouter);
 app.use('/auth', authRouter);
 app.use('/fin/', finRouter);
+app.use('/budget/', budgetRouter);
 
 const start = async (app) => {
 
