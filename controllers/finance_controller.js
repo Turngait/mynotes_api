@@ -242,6 +242,24 @@ class FinController {
 
     res.json(response.getResponse());
   }
+
+  static async editBudget(req, res) {
+    const response = new DTO();
+    const {budget, token} = req.body;
+    const id_user = await getUserId(token);
+
+    const {status} = await fetch(FIN_URL + 'budget/edit', {
+      method: 'POST',
+      body: JSON.stringify({budget, id_user}),
+      headers: {'Content-Type': 'application/json' }
+    }).then(res => res.json());
+
+    if(status === 500) response.setStatusText('Server error');
+    response.setStatus(status);
+    res.status(status);
+
+    res.json(response.getResponse());
+  }
 }
 
 module.exports = FinController

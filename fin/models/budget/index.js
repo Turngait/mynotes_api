@@ -57,6 +57,26 @@ class Budget {
     }
   }
 
+  static async editBudget(budget, id_user) {
+    const budgets = await budgetModel.findOne({id_user});
+
+    for (const item of budgets.items) {
+      if(item._id.toString() === budget._id.toString()) {
+        item.title = budget.title;
+        item.balance = budget.balance;
+      }
+    }
+    budgets.balance = calculateBalance(budgets.items);
+
+    try {
+      budgets.save();
+      return 202;
+    } catch (error) {
+      console.log(error);
+      return 500;
+    }
+  }
+
   static async increaseBudget(id_user, id_budget, amount) {
     try {
       const budgets = await budgetModel.findOne({id_user});

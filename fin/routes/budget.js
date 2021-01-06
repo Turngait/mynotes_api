@@ -18,6 +18,12 @@ router.post('/add', async (req, res) => {
   const {budget, id_user} = req.body;
   const status = await Budget.addBudget(budget, id_user);
   res.json({status});
-})
+});
+
+router.post('/edit', async (req, res) => {
+  const {budget, id_user} = req.body;
+  const status = await Budget.editBudget(budget, id_user);
+  res.json({status});
+});
 
 module.exports = router;
