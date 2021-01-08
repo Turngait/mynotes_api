@@ -11,6 +11,12 @@ router.post('/incomeforperiod', async (req, res) => {
   res.json({incomes});
 });
 
+router.post('/incomebysource', async (req, res) => {
+  const {id_source, period, id_user} = req.body;
+  const incomes = await Income.getIncomesForPeriodAndSource(id_source, period, id_user);
+  res.json({incomes});
+});
+
 router.post('/addincome', async (req, res) => {
   const {income, id_user} = req.body;
   const status = await Income.addIncome(income, id_user);

@@ -1,5 +1,5 @@
 const budgetModel = require('./mongoose/budget');
-const {calculateBalance} = require('./services');
+const {calculateBalance, isBudgetEmpty} = require('./services');
 
 class Budget {
   static async createBudget(id_user) {
@@ -75,6 +75,30 @@ class Budget {
       console.log(error);
       return 500;
     }
+  }
+
+  static async deleteBudget(id_budget, id_user) {
+    const budgets = await budgetModel.findOne({id_user});
+    let error = null;
+    let status = 202;
+
+    const isEmpty = isBudgetEmpty(budgets.items, id_budget);
+    if(!isEmpty) {
+      error = 'Баланс счета не равен нулю. Обнулите счет прежде чем его удалять.';
+      status = 422;
+    } else {
+      const items = budgets.items.filter(item => item._id.toString() !== id_budget);
+      budgets.items = items;
+  
+      try {
+        budgets.save();
+      } catch(err) {
+        console.log(err);
+        status = 500;
+      }
+    }
+    
+    return {status, error}
   }
 
   static async increaseBudget(id_user, id_budget, amount) {

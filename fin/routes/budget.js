@@ -26,4 +26,10 @@ router.post('/edit', async (req, res) => {
   res.json({status});
 });
 
+router.post('/delete', async (req, res) => {
+  const {id_budget, id_user} = req.body;
+  const {status, error} = await Budget.deleteBudget(id_budget, id_user);
+  res.json({status, error})
+})
+
 module.exports = router;

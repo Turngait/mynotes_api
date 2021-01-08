@@ -10,8 +10,13 @@ class Income {
     return normalizeIncomes({incomes: normalizeIncomes(incomes), sources: sources.sources});
   }
 
+  static async getIncomesForPeriodAndSource(id_source, period, id_user) {
+    const incomes =  await incomeModel.find({id_user, id_source, period}).sort('-date') || [];
+    const sources = await sourceModel.findOne({id_user}) || [];
+    return normalizeIncomes({incomes: normalizeIncomes(incomes), sources: sources.sources});
+  }
+
   static async addIncome(income, id_user) {
-    console.log(income)
     const newIncome = new incomeModel({
       id_user,
       period: String(income.date).substring(0, 7),

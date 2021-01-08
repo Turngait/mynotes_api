@@ -167,6 +167,30 @@ class FinController {
     }
   }
 
+  static async getAllIncomesByPeriodAndSource(req, res) {
+    const {id_source, period, token} = req.body;
+    const id_user = await getUserId(token);
+
+    const {incomes} = await fetch(FIN_URL + 'incomes/incomebysource', {
+      method: 'POST',
+      body: JSON.stringify({id_source, period, id_user}),
+      headers: {'Content-Type': 'application/json' }
+    }).then(res => res.json());
+    
+
+    const response = new DTO();
+
+    if (incomes) {
+      res.status(200);
+      response.setStatus(200);
+      response.setData({incomes});
+      res.json(response.getResponse());
+    } else {
+      res.status(503)
+      res.json(response.getResponse());
+    }
+  }
+
   static async addIncome(req, res) {
     const response = new DTO();
     const {income, token} = req.body;
@@ -260,6 +284,25 @@ class FinController {
 
     res.json(response.getResponse());
   }
+
+  static async deleteBudget(req, res) {
+    const response = new DTO();
+    const {id_budget, token} = req.body;
+    const id_user = await getUserId(token);
+
+    const {status, error} = await fetch(FIN_URL + 'budget/delete', {
+      method: 'POST',
+      body: JSON.stringify({id_budget, id_user}),
+      headers: {'Content-Type': 'application/json' }
+    }).then(res => res.json());
+
+    if(status === 500) response.setStatusText('Server error');
+    if(status === 422) response.setErrors(error);
+    response.setStatus(status);
+    res.status(status);
+
+    res.json(response.getResponse());
+  }
 }
 
-module.exports = FinController
+module.exports = FinController;
