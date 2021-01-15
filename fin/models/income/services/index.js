@@ -23,6 +23,28 @@ function normalizeIncomes (incomes) {
   }
 }
 
+function normalizeSourceData ({sources, incomes}) {
+  const normalizedSources = [];
+  for (let source of sources) {
+    let sum = 0;
+    for (const income of incomes) {
+      for( const item of income.items) {
+        if (source._id.toString() === item.id_source.toString()) {
+          sum += +item.amount;
+        }
+      }
+
+    }
+    normalizedSources.push({
+      _id: source._id,
+      title: source.title,
+      sum
+    })
+  }
+  return normalizedSources;
+}
+
 module.exports = {
-  normalizeIncomes
+  normalizeIncomes,
+  normalizeSourceData
 }

@@ -1,6 +1,6 @@
 const incomeModel = require('./mongoose/income');
 const sourceModel = require('./mongoose/source');
-const {normalizeIncomes} = require('./services');
+const {normalizeIncomes, normalizeSourceData} = require('./services');
 
 class Income {
 
@@ -93,6 +93,11 @@ class Income {
       console.log(err);
       return 500;
     }
+  }
+
+  static async getSourceData(id_user, period) {
+    const data = await Income.getIncomesForPeriod(period, id_user);
+    return normalizeSourceData(data);
   }
   
 }

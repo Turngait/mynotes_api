@@ -1,6 +1,6 @@
 const costModel = require('./mongoose/cost');
 const costGroupModel = require('./mongoose/costGroup');
-const {normalizeCosts} = require('./services');
+const {normalizeCosts, normalizeGroupData} = require('./services');
 
 class Costs {
   static async getCostsForPeriod(period, id_user) {
@@ -94,6 +94,13 @@ class Costs {
       return 500;
     }
   }
+  
+  static async getGroupData(id_user, period) {
+    const data = await Costs.getCostsForPeriod(period, id_user);
+    return normalizeGroupData(data);
+  }
+  
 }
+
 
 module.exports = Costs;

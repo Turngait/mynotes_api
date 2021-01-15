@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
   res.status(403);
 });
 
-router.get('/user/:token', (req, res) => {
+router.get('/user/:token/:period', (req, res) => {
   AuthController.getUserData(req, res);
 });
 

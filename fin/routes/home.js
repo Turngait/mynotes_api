@@ -28,6 +28,13 @@ router.post('/newuser', async (req, res) => {
 
   if(statusBalance === 202 && statusGroup === 204 && statusSource === 204) status = 204;
   res.json({status});
-})
+});
+
+router.post('/groupsdata', async (req, res) => {
+  const {id_user, period} = req.body;
+  const groups = await Costs.getGroupData(id_user, period);
+  const sources = await Income.getSourceData(id_user, period);
+  res.json({groups, sources});
+});
 
 module.exports = router;

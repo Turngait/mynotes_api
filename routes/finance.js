@@ -73,9 +73,13 @@ router.post('/income/addsource', async (req, res) => {
   FinController.addSource(req, res);
 });
 
+router.delete('/income/deletesource/:id/:token', async (req, res) => {
+  FinController.deleteSource(req, res);
+});
+
 router.post('/income/bysource', async (req, res) => {
   FinController.getAllIncomesByPeriodAndSource(req, res);
-})
+});
 
 router.post('/balance', async (req, res) => {
   FinanceController.saveBalance(req, res);

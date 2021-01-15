@@ -38,8 +38,8 @@ router.post('/addsource', async (req, res) => {
 });
 
 router.post('/deletesource', async (req, res) => {
-  const {id_source, id_user} = req.body;
-  const status = await Income.deleteSource(id_source, id_user);
+  const {id, id_user} = req.body;
+  const status = await Income.deleteSource(id, id_user);
   res.json({status});
 });
 

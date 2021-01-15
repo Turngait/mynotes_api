@@ -23,6 +23,28 @@ function normalizeCosts (costs) {
   }
 }
 
+function normalizeGroupData ({groups, costs}) {
+  const normalizedGroups = [];
+  for (let group of groups) {
+    let sum = 0;
+    for (const cost of costs) {
+      for( const item of cost.items) {
+        if (group._id.toString() === item.id_group.toString()) {
+          sum += +item.amount;
+        }
+      }
+
+    }
+    normalizedGroups.push({
+      _id: group._id,
+      title: group.title,
+      sum
+    })
+  }
+  return normalizedGroups;
+}
+
 module.exports = {
-  normalizeCosts
+  normalizeCosts,
+  normalizeGroupData
 }

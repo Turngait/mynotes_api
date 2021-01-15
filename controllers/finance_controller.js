@@ -227,6 +227,24 @@ class FinController {
     res.json(response.getResponse());
   }
 
+  static async deleteSource(req, res) {
+    const response = new DTO();
+    const {id, token} = req.params;
+    const id_user = await getUserId(token);
+
+    const {status} = await fetch(FIN_URL+ 'incomes/deletesource', {
+      method: 'POST',
+      body: JSON.stringify({id, id_user}),
+      headers: {'Content-Type': 'application/json' }
+    }).then(res => res.json());
+
+    if(status === 500) response.setStatusText('Server error');
+    response.setStatus(status);
+    res.status(status);
+
+    res.json(response.getResponse());
+  }
+
   static async deleteIncome(req, res) {
     const response = new DTO();
     const {id, token} = req.params;

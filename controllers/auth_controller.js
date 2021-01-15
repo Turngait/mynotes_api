@@ -88,7 +88,7 @@ class AuthController {
   }
 
   static async getUserData(req, res) {
-    const {token} = req.params;
+    const {token, period} = req.params;
 
     const { data } = await fetch(AUTH_URL + 'userinfo', {
       method: 'POST',
@@ -98,6 +98,12 @@ class AuthController {
     .then(res => res.json());
     
     const budget = await getBudget(data.id);
+
+    const { sources, groups } = await fetch(FIN_URL + 'groupsdata', {
+      method: 'POST',
+      body: JSON.stringify({id_user: data.id, period}),
+      headers: { 'Content-Type': 'application/json' }
+    }).then(res => res.json());
 
     const response = new DTO();
 
@@ -110,7 +116,9 @@ class AuthController {
           balance: budget.balance,
           items: budget.items
         },
-        balance: data.balance
+        balance: data.balance,
+        groups,
+        sources
       });
       response.setStatus(200);
       res.json(response.getResponse());
