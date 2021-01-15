@@ -1,11 +1,9 @@
 const express = require('express');
 const cors = require('cors');
-
 const { PORT } = require('./config/api');
+const mongoose = require('mongoose');
+const {urlLocal} = require('./config/mongo');
 const homeRouter = require('./routes/home');
-const authRouter = require('./routes/authorization');
-const finRouter = require('./routes/finance');
-const budgetRouter = require('./routes/budget');
 const app = express();
 
 app.use(cors());
@@ -16,15 +14,18 @@ app.use(express.json({
 }));
 
 app.use('/', homeRouter);
-app.use('/auth', authRouter);
-app.use('/fin/', finRouter);
-app.use('/budget/', budgetRouter);
 
 const start = async (app) => {
-
+  // TODO: Move to providers
+  await mongoose.connect(urlLocal, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }).then(() => {
+    console.log('Auth server successfully connected to the database');
+  })
 
   app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`)
+    console.log(`Auth server is running on port ${PORT}`)
   })
 }
 

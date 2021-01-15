@@ -1,127 +1,175 @@
-const user_model = require('../models/user_model');
-const User = require('../models/User');
-const DTO = require('../models/dto');
-const {API_MAIL} = require('../config/api');
+const fetch = require('node-fetch');
 const sendgrid = require('nodemailer-sendgrid-transport');
 const nodemailer = require('nodemailer');
+
+const DTO = require('../models/dto');
+const {API_MAIL, AUTH_URL, FIN_URL} = require('../config/api');
 const {signUpMail, sendRecoveryMessage} = require('../email/functions');
 const {createHashForRecovery} = require('../config/security');
+const {getBudget} = require('../utils/budget');
+
 
 class AuthController {
-  constructor() {
-
-  }
-
   static async signIn (req, res) {
-    const user = new User(user_model)
-    const answer = await user.signIn(req.body)
-    const response = new DTO()
-    if(answer) {
-      res.status(200)
-      response.setData(answer)
-      response.setStatus(200)
-      res.json(response.getResponse())
+    const { data } = await fetch(AUTH_URL + 'signin', {
+      method: 'POST',
+      body: JSON.stringify(req.body),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(res => res.json())
+
+    const response = new DTO();
+
+    if(data.status === 200) {
+      response.setData(data.user);
     } else {
-      res.status(403)
-      response.setData({'token': false})
-      response.setStatus(403)
-      res.json(response.getResponse())
+      response.setData({'token': false});
     }
+
+    res.status(data.status);
+    response.setStatus(data.status);
+    res.json(response.getResponse());
   }
 
   static async signUp(req, res) {
-    const response = new DTO()
-    const user = new User(user_model)
-    try {
-      const answer = await user.signUp(req.body)
-      if (answer === 'User exist') {
-        response.setStatus(208)
-        response.setStatusText('User exist')
-        response.setData({})
-      } else if (answer) {
-        res.status(202)
-        response.setStatus(202)
-        response.setStatusText('User created')
-        response.setData({})
+    const {data} = await fetch(AUTH_URL + 'signup', {
+      method: 'POST',
+      body: JSON.stringify(req.body),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(res => res.json());
 
-        const transporter = nodemailer.createTransport(sendgrid({
-          auth: {api_key: API_MAIL}
-        }));
+    const response = new DTO();
 
-        transporter.sendMail(signUpMail({email: req.body.email, password: req.body.pass}));
+    if (data.status === 208) {
+      response.setStatus(208);
+      response.setStatusText('User exist');
+      response.setData({});
+    } else if (data.status === 202) {
 
-      } else {
+      const {status} = await fetch(FIN_URL + 'newuser', {
+        method: 'POST',
+        body: JSON.stringify({id_user: data.userData._id}),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => res.json());
+
+      if(status === 500) {
         res.status(500)
         response.setStatus(500)
         response.setStatusText('Server error')
         response.setData({})
+      } else {
+        res.status(202);
+        response.setStatus(202);
+        response.setStatusText('User created');
+        response.setData({
+          token: data.userData.token,
+          settings: data.userData.settings,
+          name: data.userData.name,
+          email: data.userData.email,
+          balance: 0
+        });
       }
-      res.json(response.getResponse())
-    } catch(e) {
-      res.status(503)
-      response.setStatus(503)
+      // TODO: Move transporter to providers
+      const transporter = nodemailer.createTransport(sendgrid({
+        auth: {api_key: API_MAIL}
+      }));
+
+      transporter.sendMail(signUpMail({email: req.body.email, password: req.body.pass}));
+
+    } else {
+      res.status(500)
+      response.setStatus(500)
       response.setStatusText('Server error')
-      res.json(response.getResponse())
+      response.setData({})
     }
+    res.json(response.getResponse())
   }
 
   static async getUserData(req, res) {
-    const {token} = req.params;
-    const response = new DTO();
-    const user = new User(user_model);
-    const info = await user.getuserInfo(token);
+    const {token, period} = req.params;
 
-    if (info) {
-      res.status(200)
-      response.setData(info)
-      response.setStatus(200)
-      res.json(response.getResponse())
+    const { data } = await fetch(AUTH_URL + 'userinfo', {
+      method: 'POST',
+      body: JSON.stringify({token}),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(res => res.json());
+    
+    const budget = await getBudget(data.id);
+
+    const { sources, groups } = await fetch(FIN_URL + 'groupsdata', {
+      method: 'POST',
+      body: JSON.stringify({id_user: data.id, period}),
+      headers: { 'Content-Type': 'application/json' }
+    }).then(res => res.json());
+
+    const response = new DTO();
+
+    if (data && budget) {
+      res.status(200);
+      response.setData({
+        email: data.email,
+        name: data.name,
+        budget: {
+          balance: budget.balance,
+          items: budget.items
+        },
+        balance: data.balance,
+        groups,
+        sources
+      });
+      response.setStatus(200);
+      res.json(response.getResponse());
     } else {
-      res.status(403)
-      response.setStatus(403)
-      res.json(response.getResponse())
+      res.status(403);
+      response.setStatus(403);
+      res.json(response.getResponse());
     }
   }
 
   static async saveNewUserData(req, res) {
     const response = new DTO();
-    const user = new User(user_model);
 
-    const data = {
-      name: req.body.name,
-      email: req.body.email
-    };
-    const {token} = req.body;
+    const { status } = await fetch(AUTH_URL + 'setuserdata', {
+      method: 'POST',
+      body: JSON.stringify({...req.body}),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(res => res.json());
 
-    const answer = await user.saveNewUserInfo(data, token);
-
-    if (answer === 204) {
-      res.status(204)
-      response.setStatus(204)
+    if (status === 204) {
+      res.status(204);
+      response.setStatus(204);
       res.json(response.getResponse())
-    } else if (answer === 403) {
-      res.status(403)
-      response.setStatus(403)
-      res.json(response.getResponse())
+    } else if (status === 403) {
+      res.status(403);
+      response.setStatus(403);
+      res.json(response.getResponse());
     } else {
-      res.status(503)
-      response.setStatus(503)
-      response.setStatusText('Server error')
-      res.json(response.getResponse())
+      res.status(503);
+      response.setStatus(503);
+      response.setStatusText('Server error');
+      res.json(response.getResponse());
     }
 
   }
 
   static async changeNewPassword(req, res) {
+    const { status } = await fetch(AUTH_URL + 'changepassword', {
+      method: 'POST',
+      body: JSON.stringify({...req.body}),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(res => res.json());
+
     const response = new DTO();
-    const user = new User(user_model);
 
-    const answer = await user.changePassword(req.body.pass, req.body.token);
+    if(status === 500) response.setStatusText('Server error');
 
-    if(answer === 500) response.setStatusText('Server error');
-
-    res.status(answer);
-    response.setStatus(answer);
+    res.status(status);
+    response.setStatus(status);
     res.json(response.getResponse());
   }
 
@@ -130,6 +178,7 @@ class AuthController {
     const hash = createHashForRecovery(email);
     const link = `/setnewpass/${email}/${hash}`;
 
+    // TODO Move transporter to providers
     const transporter = nodemailer.createTransport(sendgrid({
       auth: {api_key: API_MAIL}
     }));
@@ -142,21 +191,28 @@ class AuthController {
   }
   
   static async setNewPass(req, res) {
-    const user = new User(user_model);
-    const {email, hash, pass} = req.body;
+    const {email, hash} = req.body;
     const secHash = createHashForRecovery(email);
     if (secHash === hash) {
-      const answer = await user.setNewPassByEmail(pass, email);
+      const { status } = await fetch(AUTH_URL + 'recoverypassword', {
+        method: 'POST',
+        body: JSON.stringify({...req.body}),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => res.json());
 
-      if (answer == 204) {
+      if (status === 204) {
         res.status(204)
         res.json({isChange: true});
       } else {
-        res.status(500)
+        res.status(status)
         res.json({isChange: false});
       }
+    } else {
+      res.status(403)
+      res.json({isChange: false});
     }
   }
 }
 
-module.exports = AuthController
+module.exports = AuthController;

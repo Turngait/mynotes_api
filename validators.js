@@ -1,36 +1,33 @@
 const {body} = require('express-validator/check')
 
 exports.loginValidators = [
-  body('email').isEmail().withMessage('Must be an e-mail')
+  body('email').isEmail().withMessage('Введите правильный e-mail')
 ]
 
 exports.signUpValidators = [
-  body('email').isEmail().withMessage('Must be an e-mail'),
-  body('pass').isLength({min: 5}).withMessage('Length of password must be more then 5 letters'),
-  body('name').isLength({min: 2}).withMessage('Length of name must be more then 2 letters')
-]
-
-exports.addWlistValidators = [
-  body('price').isCurrency().withMessage('Must be a price'),
-  body('name').isLength({min: 3}).withMessage('Length of title must be more then 3 letters')
-]
-
-exports.addWlistGroupValidators = [
-  body('title').isLength({min: 3}).withMessage('Length of title must be more then 3 letters')
+  body('email').isEmail().withMessage('Введите правильный e-mail'),
+  body('pass').isLength({min: 5}).withMessage('Длина пароля должна быть не менее 5-ти символов'),
+  body('name').isLength({min: 2}).withMessage('Длина имени должна быть не менее 2 символов')
 ]
 
 exports.addCostGroupValidators = [
-  body('groupTitle').isLength({min: 3}).withMessage('Length of title must be more then 3 letters')
+  body('groupTitle').isLength({min: 3}).withMessage('Длина названия должна быть не меенее 3х символов')
 ]
 
 exports.addCostItemValidators = [
-  body('cost.title').isLength({min: 3}).withMessage('Length of title must be more then 3 letters'),
-  body('cost.amount').isNumeric().withMessage('Ammount of cost must be a numeric'),
-  body('cost.amount').isLength({min: 1}).withMessage('Ammount of cost must be a numeric')
+  body('cost.title').isLength({min: 3}).withMessage('Длина названия должна быть не меенее 3х символов'),
+  body('cost.amount').isNumeric().withMessage('Сумма должна быть числом'),
+  body('cost.amount').isLength({min: 1}).withMessage('Длина суммы должна быть не менее 1 символа')
 ]
 
 exports.addIncomeValidators = [
-  body('income.title').isLength({min: 3}).withMessage('Length of title must be more then 3 letters'),
-  body('income.amount').isNumeric().withMessage('Ammount of cost must be a numeric'),
-  body('income.amount').isLength({min: 1}).withMessage('Ammount of cost must be a numeric')
+  body('income.title').isLength({min: 3}).withMessage('Длина названия должна быть не меенее 3х символов'),
+  body('income.amount').isNumeric().withMessage('Сумма должна быть числом'),
+  body('income.amount').isLength({min: 1}).withMessage('Длина суммы должна быть не менее 1 символа')
+]
+
+exports.addBudgetValidators = [
+  body('budget.title').isLength({min: 3}).withMessage('Длина названия должна быть не меенее 3х символов'),
+  body('budget.balance').isNumeric().withMessage('Сумма баланса должна быть числом'),
+  body('budget.balance').isLength({min: 1}).withMessage('Длина суммы должна быть не менее 1 символа')
 ]
