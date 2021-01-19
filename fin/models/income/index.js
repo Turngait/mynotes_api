@@ -31,7 +31,7 @@ class Income {
 
     try {
       newIncome.save();
-      return 204;
+      return 201;
     } catch (error) {
       console.log(error)
       return 500;
@@ -68,10 +68,10 @@ class Income {
             title: source_title
           }]
         });
-        incomeSource.save();
+        await incomeSource.save();
       }
 
-      return 204;
+      return 201;
     } catch(error) {
       console.log(error);
       return 500;

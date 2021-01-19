@@ -30,7 +30,7 @@ class Costs {
 
     try {
       newCost.save();
-      return 204;
+      return 201;
     } catch (error) {
       console.log(error)
       return 500;
@@ -69,10 +69,10 @@ class Costs {
             title: group_title
           }]
         });
-        costGroup.save();
+        await costGroup.save();
       }
 
-      return 204;
+      return 201;
     } catch(error) {
       console.log(error);
       return 500;

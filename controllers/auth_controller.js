@@ -11,6 +11,10 @@ const {getBudget} = require('../utils/budget');
 
 class AuthController {
   static async signIn (req, res) {
+    const ip = req.headers['x-client-ip'] || req.connection.remoteAddress;
+    console.log(ip)
+    console.log(req.headers)
+    
     const { data } = await fetch(AUTH_URL + 'signin', {
       method: 'POST',
       body: JSON.stringify(req.body),

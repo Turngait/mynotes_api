@@ -73,7 +73,7 @@ class FinController {
     const {token, cost} = req.body;
     const id_user = await getUserId(token);
     
-    const { status } = await fetch(FIN_URL + 'costs/addcost', {
+    const { status, costs } = await fetch(FIN_URL + 'costs/addcost', {
       method: 'POST',
       body: JSON.stringify({cost, id_user}),
       headers: { 'Content-Type': 'application/json' }
@@ -82,6 +82,7 @@ class FinController {
 
     if(status === 500) response.setStatusText('Server error');
     response.setStatus(status);
+    response.setData({costs});
     res.status(status);
     res.json(response.getResponse());
   }
@@ -113,7 +114,7 @@ class FinController {
     const {token, groupTitle} = req.body;
     const id_user = await getUserId(token);
 
-    const {status} = await fetch(FIN_URL+ 'costs/groupadd', {
+    const {status, costs} = await fetch(FIN_URL+ 'costs/groupadd', {
       method: 'POST',
       body: JSON.stringify({group_title: groupTitle, id_user}),
       headers: {'Content-Type': 'application/json' }
@@ -122,7 +123,7 @@ class FinController {
     if(status === 500) response.setStatusText('Server error');
     response.setStatus(status);
     res.status(status);
-
+    response.setData({costs});
     res.json(response.getResponse())
   }
 
@@ -196,7 +197,7 @@ class FinController {
     const {income, token} = req.body;
     const id_user = await getUserId(token);
 
-    const {status} = await fetch(FIN_URL + 'incomes/addincome', {
+    const {status, incomes} = await fetch(FIN_URL + 'incomes/addincome', {
       method: 'POST',
       body: JSON.stringify({income, id_user}),
       headers: {'Content-Type': 'application/json' }
@@ -204,6 +205,7 @@ class FinController {
 
     if(status === 500) response.setStatusText('Server error');
     response.setStatus(status);
+    response.setData({incomes});
     res.status(status);
 
     res.json(response.getResponse());
@@ -214,7 +216,7 @@ class FinController {
     const {source, token} = req.body;
     const id_user = await getUserId(token);
 
-    const {status} = await fetch(FIN_URL + 'incomes/addsource', {
+    const {status, incomes} = await fetch(FIN_URL + 'incomes/addsource', {
       method: 'POST',
       body: JSON.stringify({source, id_user}),
       headers: {'Content-Type': 'application/json' }
@@ -223,7 +225,7 @@ class FinController {
     if(status === 500) response.setStatusText('Server error');
     response.setStatus(status);
     res.status(status);
-
+    response.setData({incomes});
     res.json(response.getResponse());
   }
 
@@ -272,7 +274,7 @@ class FinController {
     const {budget, token} = req.body;
     const id_user = await getUserId(token);
 
-    const {status} = await fetch(FIN_URL + 'budget/add', {
+    const {status, budgets} = await fetch(FIN_URL + 'budget/add', {
       method: 'POST',
       body: JSON.stringify({budget, id_user}),
       headers: {'Content-Type': 'application/json' }
@@ -280,6 +282,7 @@ class FinController {
 
     if(status === 500) response.setStatusText('Server error');
     response.setStatus(status);
+    response.setData({budgets});
     res.status(status);
 
     res.json(response.getResponse());
@@ -290,7 +293,7 @@ class FinController {
     const {budget, token} = req.body;
     const id_user = await getUserId(token);
 
-    const {status} = await fetch(FIN_URL + 'budget/edit', {
+    const {status, budgets} = await fetch(FIN_URL + 'budget/edit', {
       method: 'POST',
       body: JSON.stringify({budget, id_user}),
       headers: {'Content-Type': 'application/json' }
@@ -299,7 +302,7 @@ class FinController {
     if(status === 500) response.setStatusText('Server error');
     response.setStatus(status);
     res.status(status);
-
+    response.setData({budgets});
     res.json(response.getResponse());
   }
 
@@ -308,7 +311,7 @@ class FinController {
     const {id_budget, token} = req.body;
     const id_user = await getUserId(token);
 
-    const {status, error} = await fetch(FIN_URL + 'budget/delete', {
+    const {status, error, budgets} = await fetch(FIN_URL + 'budget/delete', {
       method: 'POST',
       body: JSON.stringify({id_budget, id_user}),
       headers: {'Content-Type': 'application/json' }
@@ -317,6 +320,8 @@ class FinController {
     if(status === 500) response.setStatusText('Server error');
     if(status === 422) response.setErrors(error);
     response.setStatus(status);
+    response.setData({budgets});
+    
     res.status(status);
 
     res.json(response.getResponse());
