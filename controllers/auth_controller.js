@@ -103,7 +103,7 @@ class AuthController {
     
     const budget = await getBudget(data.id);
 
-    const { sources, groups } = await fetch(FIN_URL + 'groupsdata', {
+    const { sources, groups, stat } = await fetch(FIN_URL + 'groupsdata', {
       method: 'POST',
       body: JSON.stringify({id_user: data.id, period}),
       headers: { 'Content-Type': 'application/json' }
@@ -122,7 +122,8 @@ class AuthController {
         },
         balance: data.balance,
         groups,
-        sources
+        sources,
+        stat
       });
       response.setStatus(200);
       res.json(response.getResponse());

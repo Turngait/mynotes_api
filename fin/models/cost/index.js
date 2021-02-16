@@ -99,6 +99,17 @@ class Costs {
     const data = await Costs.getCostsForPeriod(period, id_user);
     return normalizeGroupData(data);
   }
+
+  static async getCostsAmountForPeriod(id_user, period) {
+    const costs = await costModel.find({id_user, period}) || [];
+    let costsForPeriod = 0;
+    if (costs.length > 0) {
+      for (let cost of costs) {
+        costsForPeriod += cost.amount;
+      }
+    }
+    return costsForPeriod;
+  }
   
 }
 

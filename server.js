@@ -21,8 +21,6 @@ app.use('/fin/', finRouter);
 app.use('/budget/', budgetRouter);
 
 const start = async (app) => {
-
-
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
   })
