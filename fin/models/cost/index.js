@@ -30,7 +30,7 @@ class Costs {
 
     try {
       newCost.save();
-      return 204;
+      return 201;
     } catch (error) {
       console.log(error)
       return 500;
@@ -69,10 +69,10 @@ class Costs {
             title: group_title
           }]
         });
-        costGroup.save();
+        await costGroup.save();
       }
 
-      return 204;
+      return 201;
     } catch(error) {
       console.log(error);
       return 500;
@@ -98,6 +98,17 @@ class Costs {
   static async getGroupData(id_user, period) {
     const data = await Costs.getCostsForPeriod(period, id_user);
     return normalizeGroupData(data);
+  }
+
+  static async getCostsAmountForPeriod(id_user, period) {
+    const costs = await costModel.find({id_user, period}) || [];
+    let costsForPeriod = 0;
+    if (costs.length > 0) {
+      for (let cost of costs) {
+        costsForPeriod += cost.amount;
+      }
+    }
+    return costsForPeriod;
   }
   
 }

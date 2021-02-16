@@ -11,6 +11,10 @@ const {getBudget} = require('../utils/budget');
 
 class AuthController {
   static async signIn (req, res) {
+    const ip = req.headers['x-client-ip'] || req.connection.remoteAddress;
+    console.log(ip)
+    console.log(req.headers)
+    
     const { data } = await fetch(AUTH_URL + 'signin', {
       method: 'POST',
       body: JSON.stringify(req.body),
@@ -99,7 +103,7 @@ class AuthController {
     
     const budget = await getBudget(data.id);
 
-    const { sources, groups } = await fetch(FIN_URL + 'groupsdata', {
+    const { sources, groups, stat } = await fetch(FIN_URL + 'groupsdata', {
       method: 'POST',
       body: JSON.stringify({id_user: data.id, period}),
       headers: { 'Content-Type': 'application/json' }
@@ -118,7 +122,8 @@ class AuthController {
         },
         balance: data.balance,
         groups,
-        sources
+        sources,
+        stat
       });
       response.setStatus(200);
       res.json(response.getResponse());

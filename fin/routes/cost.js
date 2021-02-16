@@ -18,8 +18,12 @@ router.post('/costsforgroupandperiod', async (req, res) => {
 router.post('/addcost', async (req, res) => {
   const {cost, id_user} = req.body;
   const status = await Costs.addCost(cost, id_user);
-  await Budget.decreaseBudget(id_user, cost.budget, +cost.amount);
-  res.json({status})
+  let costs = null;
+  if (status === 201){
+    await Budget.decreaseBudget(id_user, cost.budget, +cost.amount);
+    costs = await Costs.getCostsForPeriod(String(cost.date).substring(0, 7), id_user);
+  }
+  res.json({status, costs})
 });
 
 router.post('/deletecost', async (req, res) => {
@@ -32,7 +36,11 @@ router.post('/deletecost', async (req, res) => {
 router.post('/groupadd', async (req, res) => {
   const {group_title, id_user} = req.body;
   const status = await Costs.addGroup(group_title, id_user);
-  res.json({status});
+  let costs = null;
+  if (status === 201){
+    costs = await Costs.getCostsForPeriod(new Date().toISOString().slice(0,7), id_user);
+  }
+  res.json({status, costs});
 });
 
 router.post('/groupdelete', async (req, res) => {

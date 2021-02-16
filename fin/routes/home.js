@@ -34,7 +34,11 @@ router.post('/groupsdata', async (req, res) => {
   const {id_user, period} = req.body;
   const groups = await Costs.getGroupData(id_user, period);
   const sources = await Income.getSourceData(id_user, period);
-  res.json({groups, sources});
+  const costsAmount = await Costs.getCostsAmountForPeriod(id_user, period);
+  const incomesAmount = await Income.getIncomeAmountForPeriod(id_user, period);
+  const stat = {costsAmount, incomesAmount};
+  
+  res.json({groups, sources, stat});
 });
 
 module.exports = router;

@@ -33,8 +33,8 @@ class Budget {
       budgets.items.push(budget);
       budgets.balance += +budget.balance;
       try {
-        budgets.save();
-        return 204;
+        await budgets.save();
+        return 201;
       } catch (error) {
         console.log(error);
         return 500;
@@ -49,7 +49,7 @@ class Budget {
       });
       try {
         await newBudget.save();
-        return 204;
+        return 201;
       } catch (error) {
         console.log(error);
         return 500;
@@ -69,7 +69,7 @@ class Budget {
     budgets.balance = calculateBalance(budgets.items);
 
     try {
-      budgets.save();
+      await budgets.save();
       return 202;
     } catch (error) {
       console.log(error);
@@ -91,7 +91,7 @@ class Budget {
       budgets.items = items;
   
       try {
-        budgets.save();
+        await budgets.save();
       } catch(err) {
         console.log(err);
         status = 500;

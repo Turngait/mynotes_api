@@ -31,7 +31,7 @@ class Income {
 
     try {
       newIncome.save();
-      return 204;
+      return 201;
     } catch (error) {
       console.log(error)
       return 500;
@@ -68,10 +68,10 @@ class Income {
             title: source_title
           }]
         });
-        incomeSource.save();
+        await incomeSource.save();
       }
 
-      return 204;
+      return 201;
     } catch(error) {
       console.log(error);
       return 500;
@@ -98,6 +98,17 @@ class Income {
   static async getSourceData(id_user, period) {
     const data = await Income.getIncomesForPeriod(period, id_user);
     return normalizeSourceData(data);
+  }
+
+  static async getIncomeAmountForPeriod(id_user, period) {
+    const incomes = await incomeModel.find({id_user, period}) || [];
+    let incomesForPeriod = 0;
+    if (incomes.length > 0) {
+      for (let income of incomes) {
+        incomesForPeriod += income.amount;
+      }
+    }
+    return incomesForPeriod;
   }
   
 }

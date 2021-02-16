@@ -20,8 +20,12 @@ router.post('/incomebysource', async (req, res) => {
 router.post('/addincome', async (req, res) => {
   const {income, id_user} = req.body;
   const status = await Income.addIncome(income, id_user);
-  await Budget.increaseBudget(id_user, income.budget, +income.amount);
-  res.json({status});
+  let incomes = null;
+  if (status === 201) {
+    await Budget.increaseBudget(id_user, income.budget, +income.amount);
+    incomes = await Income.getIncomesForPeriod(String(income.date).substring(0, 7), id_user);
+  }
+  res.json({status, incomes});
 });
 
 router.post('/deleteincome', async (req, res) => {
@@ -34,7 +38,11 @@ router.post('/deleteincome', async (req, res) => {
 router.post('/addsource', async (req, res) => {
   const {source, id_user} = req.body;
   const status = await Income.addSource(source, id_user);
-  res.json({status});
+  let incomes = null;
+  if (status === 201) {
+    incomes = await Income.getIncomesForPeriod(new Date().toISOString().slice(0,7), id_user);
+  }
+  res.json({status, incomes});
 });
 
 router.post('/deletesource', async (req, res) => {
