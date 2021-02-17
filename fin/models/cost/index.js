@@ -94,6 +94,25 @@ class Costs {
       return 500;
     }
   }
+
+  static async editGroup(id_group, id_user, newTitle) {
+    try {
+      const costGroups = await costGroupModel.findOne({id_user});
+    
+      if(costGroups) {
+        costGroups.groups.map(group => {
+          if (group._id.toString() === id_group) group.title = newTitle;
+        });
+        costGroups.save();
+        return 204;
+      } else {
+        return 403;
+      }
+    } catch(err) {
+      console.log(err)
+      return 500;
+    }
+  } 
   
   static async getGroupData(id_user, period) {
     const data = await Costs.getCostsForPeriod(period, id_user);

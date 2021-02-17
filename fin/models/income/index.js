@@ -95,6 +95,25 @@ class Income {
     }
   }
 
+  static async editSource(id_source, id_user, newTitle) {
+    try {
+      const sources = await sourceModel.findOne({id_user});
+    
+      if(sources) {
+        sources.sources.map(source => {
+          if (source._id.toString() === id_source) source.title = newTitle;
+        });
+        sources.save();
+        return 204;
+      } else {
+        return 403;
+      }
+    } catch(err) {
+      console.log(err)
+      return 500;
+    }
+  }
+
   static async getSourceData(id_user, period) {
     const data = await Income.getIncomesForPeriod(period, id_user);
     return normalizeSourceData(data);

@@ -145,6 +145,24 @@ class FinController {
     res.json(response.getResponse());
   }
 
+  static async editGroup(req, res) {
+    const response = new DTO()
+    const {token, id_group, title, type} = req.body;
+    const id_user = await getUserId(token);
+
+    const {status} = await fetch(FIN_URL+ 'editgroup', {
+      method: 'POST',
+      body: JSON.stringify({id_group, title, type, id_user}),
+      headers: {'Content-Type': 'application/json' }
+    }).then(res => res.json());
+    
+    if(status === 500) response.setStatusText('Server error');
+    response.setStatus(status);
+    res.status(status);
+
+    res.json(response.getResponse());
+  }
+
   static async getAllIncomesByPeriod(req, res) {
     const {period, token} = req.params;
     const id_user = await getUserId(token);
