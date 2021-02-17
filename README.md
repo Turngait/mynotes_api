@@ -17,7 +17,7 @@ git clone https://github.com/Turngait/mynotes_api.git
 
 2. Go to develop branch
 ```
-git branch develop
+git checkout develop
 ```
 
 3. You need to make "npm install" in folder of all services. 
