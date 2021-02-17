@@ -14,7 +14,7 @@ services:
     container_name: my-notes-app
     working_dir: /home/node/app
     volumes:
-      - ./:/home/node/app
+      - ./app:/home/node/app
     expose:
       - "8081"
     links:

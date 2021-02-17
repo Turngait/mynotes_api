@@ -1,0 +1,7 @@
+/node_modules
+/db
+/config/api.js
+/config/mongo.js
+/config/mysql.js
+/config/security.js
+npm-debug.log

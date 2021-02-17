@@ -30,6 +30,18 @@ router.post('/newuser', async (req, res) => {
   res.json({status});
 });
 
+router.post('/editgroup', async (req, res) => {
+  const {id_group, title, type, id_user} = req.body;
+  let status = 500;
+
+  if (type === "costs") {
+    status = await Costs.editGroup(id_group, id_user, title);
+  } else if (type === "incomes") {
+    status = await Income.editSource(id_group, id_user, title);
+  }
+  res.json({status});
+});
+
 router.post('/groupsdata', async (req, res) => {
   const {id_user, period} = req.body;
   const groups = await Costs.getGroupData(id_user, period);

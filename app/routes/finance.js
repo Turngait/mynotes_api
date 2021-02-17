@@ -50,6 +50,10 @@ router.delete('/group/delete/:id/:token', async (req, res) => {
   FinanceController.deleteCostGroup(req, res);
 });
 
+router.patch('/group/edit', async (req, res) => {
+  FinController.editGroup(req, res);
+});
+
 router.get('/income/get/:period/:token', async (req, res) => {
   FinanceController.getAllIncomesByPeriod(req, res);
 });
