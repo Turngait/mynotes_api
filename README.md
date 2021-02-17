@@ -1,4 +1,40 @@
-# MyNotes API
+# FinCloud API
+
+This is API for FinCloud project.
+
+## Start working on local machine
+
+0. To develop this project you need to install several programs:
+nodejs
+git
+docker
+docker-compose
+
+1. Clone this project.
+```
+git clone https://github.com/Turngait/mynotes_api.git
+```
+
+2. Go to develop branch
+```
+git branch develop
+```
+
+3. You need to make "npm install" in folder of all services. 
+
+4. You need to fill config files.
+All services have config files in "/config" folder.
+Delete "_example" substring from name of the config files and fill there filds.
+
+5. Go to root folder of this project and make:
+```
+docker-compose build
+docker-compose up
+```
+
+6. ....
+
+# This documentation is not finished yet.
 
 ## Routes:
   ### Authorization:
