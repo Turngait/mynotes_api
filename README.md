@@ -47,20 +47,6 @@ docker-compose up
   post: /auth/user/changepassword
   ```
 
-  ### Wishlist:
-
-  ```
-  get:/wlist/:token - Get all wlist's items and groups for user
-  
-  post:/wlist/item/add - Add wlist's item
-  put:/wlist/item/edit/:id - Edit wlist's item by it ID
-  delete:/wlist/item/delete/:id/ - Delete w'list item by it ID
-
-  get:/wlist/group/:token - Get all wlist's groups
-  post:/wlist/group/add - Add wlist's group
-  delete:/wlist/group/delete/:id/:token - Delete group
-  ```
-
   ### Finance:
 
   ```
@@ -77,15 +63,4 @@ docker-compose up
   /fin/income/add - Add item
   /fin/income/get/:token/:period - Get all incomes for user by period
   /fin/income/delete/:token/:id - Delete one income
-  ```
-
-
-  ### Notes:
-  ```
-  get: /notes/all/:token - all notes and groups
-  post: /notes/note/add/ - add notes
-  patch: /notes/note/edit/:id/:token - edit note
-  delete: /notes/note/delete/:id/:token - delete note
-  post: /notes/group/add - add group of notes
-  delete: /notes/group/delete/:id/:token
   ```
